@@ -1,0 +1,167 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:FUEL-{YYYY}-{#####}",
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_basic",
+  "vehicle",
+  "trip",
+  "column_break_3",
+  "fuel_quantity",
+  "fuel_cost",
+  "odometer_at_fill",
+  "section_break_fill",
+  "filled_by",
+  "receipt",
+  "column_break_9",
+  "fill_up_yield",
+  "sanity_flag"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_basic",
+   "fieldtype": "Section Break",
+   "label": "Fuel Log"
+  },
+  {
+   "fieldname": "vehicle",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Vehicle",
+   "options": "Vehicle",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "trip",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Trip",
+   "options": "Trip",
+   "search_index": 1
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fuel_quantity",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Fuel Quantity",
+   "precision": "2",
+   "reqd": 1
+  },
+  {
+   "fieldname": "fuel_cost",
+   "fieldtype": "Currency",
+   "label": "Fuel Cost",
+   "reqd": 1
+  },
+  {
+   "fieldname": "odometer_at_fill",
+   "fieldtype": "Float",
+   "label": "Odometer at Fill",
+   "precision": "2",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_fill",
+   "fieldtype": "Section Break",
+   "label": "Fill-up Analysis"
+  },
+  {
+   "fieldname": "filled_by",
+   "fieldtype": "Link",
+   "label": "Filled By",
+   "options": "Driver",
+   "search_index": 1
+  },
+  {
+   "fieldname": "receipt",
+   "fieldtype": "Attach",
+   "label": "Receipt"
+  },
+  {
+   "fieldname": "column_break_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fill_up_yield",
+   "fieldtype": "Float",
+   "label": "Fill-up Yield (km/litre)",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "default": "OK",
+   "fieldname": "sanity_flag",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Sanity Flag",
+   "options": "OK\nSuspicious",
+   "read_only": 1
+  }
+ ],
+ "icon": "fa fa-tachometer",
+ "idx": 0,
+ "is_submittable": 0,
+ "issingle": 0,
+ "istable": 0,
+ "links": [],
+ "max_attachments": 2,
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Fleet Log",
+ "name": "Fuel Log",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Fleet Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Driver",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "read_only": 0,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

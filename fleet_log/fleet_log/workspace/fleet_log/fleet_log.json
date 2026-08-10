@@ -1,0 +1,261 @@
+{
+ "charts": [
+  {
+   "chart_name": "Fuel Yield Trend",
+   "label": "Fuel Yield Trend"
+  }
+ ],
+ "content": "[{\"id\":\"KlMnOpQrSt\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"UvWxYz1234\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Fleet Management</b></span>\",\"col\":12}},{\"id\":\"5678AbCdEf\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Trip\",\"col\":3}},{\"id\":\"GhIjKlMnOp\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"New Fuel Log\",\"col\":3}},{\"id\":\"QrStUvWxYz\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Flagged Trips Report\",\"col\":3}},{\"id\":\"1234567890\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Fuel Yield Trend\",\"col\":3}},{\"id\":\"AbCdEfGhIj\",\"type\":\"spacer\",\"data\":{\"col\":12}},{\"id\":\"KlMnOpQrStU\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Reports &amp; Masters</b></span>\",\"col\":12}},{\"id\":\"VwXyZaBcDe\",\"type\":\"card\",\"data\":{\"card_name\":\"Trips\",\"col\":4}},{\"id\":\"FgHiJkLmNo\",\"type\":\"card\",\"data\":{\"card_name\":\"Fuel Logs\",\"col\":4}},{\"id\":\"PqRsTuVwXy\",\"type\":\"card\",\"data\":{\"card_name\":\"Vehicles\",\"col\":4}},{\"id\":\"ZaBcDeFgHi\",\"type\":\"card\",\"data\":{\"card_name\":\"Drivers\",\"col\":4}},{\"id\":\"JkLmNoPqRs\",\"type\":\"card\",\"data\":{\"card_name\":\"Trip Expenses\",\"col\":4}},{\"id\":\"TuVwXyZaBc\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}}]",
+ "creation": "2024-01-01 00:00:00.000000",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "route",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "Fleet Log",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Trips",
+   "link_count": 3,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Trip",
+   "link_count": 0,
+   "link_to": "Trip",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Fuel Log",
+   "link_count": 0,
+   "link_to": "Fuel Log",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Trip Expense",
+   "link_count": 0,
+   "link_to": "Trip Expense",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Fuel Logs",
+   "link_count": 3,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Fuel Log",
+   "link_count": 0,
+   "link_to": "Fuel Log",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Trip",
+   "link_count": 0,
+   "link_to": "Trip",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Drivers",
+   "link_count": 2,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Driver",
+   "link_count": 0,
+   "link_to": "Driver",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "Driver",
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Driver Mileage Report",
+   "link_count": 0,
+   "link_to": "Driver Mileage Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Vehicles",
+   "link_count": 2,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Vehicle",
+   "link_count": 0,
+   "link_to": "Vehicle",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Fuel Yield Trend",
+   "link_count": 0,
+   "link_to": "Fuel Yield Trend",
+   "link_type": "Dashboard",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Trip Expenses",
+   "link_count": 1,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Trip Expense",
+   "link_count": 0,
+   "link_to": "Trip Expense",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Reports",
+   "link_count": 4,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Cost per Vehicle",
+   "link_count": 0,
+   "link_to": "Cost per Vehicle",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Driver Mileage Report",
+   "link_count": 0,
+   "link_to": "Driver Mileage Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Flagged Trips Report",
+   "link_count": 0,
+   "link_to": "Flagged Trips Report",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Fuel Yield Trend",
+   "link_count": 0,
+   "link_to": "Fuel Yield Trend",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Fleet Log",
+ "name": "Fleet Log",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "restrict_to_domain": "",
+ "roles": [],
+ "sequence_id": 5.0,
+ "shortcuts": [
+  {
+   "label": "New Trip",
+   "link_to": "Trip",
+   "type": "DocType",
+   "doc_view": "New"
+  },
+  {
+   "label": "New Fuel Log",
+   "link_to": "Fuel Log",
+   "type": "DocType",
+   "doc_view": "New"
+  },
+  {
+   "label": "Flagged Trips Report",
+   "link_to": "Flagged Trips Report",
+   "type": "Report"
+  },
+  {
+   "label": "Fuel Yield Trend",
+   "link_to": "Fuel Yield Trend",
+   "type": "Dashboard"
+  }
+ ],
+ "title": "Fleet Log"
+}

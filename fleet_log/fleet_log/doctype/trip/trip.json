@@ -1,0 +1,213 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:TRIP-{YYYY}-{#####}",
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_basic",
+  "vehicle",
+  "driver",
+  "status",
+  "column_break_4",
+  "purpose",
+  "section_break_route",
+  "start_location",
+  "start_odometer",
+  "start_time",
+  "column_break_9",
+  "end_location",
+  "end_odometer",
+  "end_time",
+  "section_break_performance",
+  "distance_covered",
+  "total_fuel_used",
+  "column_break_15",
+  "trip_yield",
+  "yield_flag"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_basic",
+   "fieldtype": "Section Break",
+   "label": "Trip"
+  },
+  {
+   "fieldname": "vehicle",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Vehicle",
+   "options": "Vehicle",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "driver",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Driver",
+   "options": "Driver",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "default": "Assigned",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Assigned\nIn Progress\nCompleted\nReconciled"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "purpose",
+   "fieldtype": "Small Text",
+   "label": "Purpose"
+  },
+  {
+   "fieldname": "section_break_route",
+   "fieldtype": "Section Break",
+   "label": "Route & Odometer"
+  },
+  {
+   "fieldname": "start_location",
+   "fieldtype": "Data",
+   "label": "Start Location"
+  },
+  {
+   "fieldname": "start_odometer",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Start Odometer",
+   "precision": "2",
+   "reqd": 1
+  },
+  {
+   "fieldname": "start_time",
+   "fieldtype": "Datetime",
+   "label": "Start Time"
+  },
+  {
+   "fieldname": "column_break_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "end_location",
+   "fieldtype": "Data",
+   "label": "End Location"
+  },
+  {
+   "fieldname": "end_odometer",
+   "fieldtype": "Float",
+   "label": "End Odometer",
+   "precision": "2"
+  },
+  {
+   "fieldname": "end_time",
+   "fieldtype": "Datetime",
+   "label": "End Time"
+  },
+  {
+   "fieldname": "section_break_performance",
+   "fieldtype": "Section Break",
+   "label": "Performance (auto-calculated)"
+  },
+  {
+   "fieldname": "distance_covered",
+   "fieldtype": "Float",
+   "label": "Distance Covered",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_fuel_used",
+   "fieldtype": "Float",
+   "label": "Total Fuel Used",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_15",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "trip_yield",
+   "fieldtype": "Float",
+   "label": "Trip Yield (km/litre)",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "default": "Normal",
+   "fieldname": "yield_flag",
+   "fieldtype": "Select",
+   "label": "Yield Flag",
+   "options": "Normal\nBelow Average\nCritical",
+   "read_only": 1
+  }
+ ],
+ "icon": "fa fa-road",
+ "idx": 0,
+ "is_submittable": 0,
+ "issingle": 0,
+ "istable": 0,
+ "links": [],
+ "max_attachments": 3,
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Fleet Log",
+ "name": "Trip",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Fleet Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Driver",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "quick_entry": 1,
+ "read_only": 0,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

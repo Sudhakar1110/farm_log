@@ -1,0 +1,98 @@
+{
+ "docstatus": 0,
+ "doctype": "Workflow",
+ "document_type": "Trip",
+ "is_active": 1,
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "name": "Trip Workflow",
+ "owner": "Administrator",
+ "send_email_alert": 0,
+ "states": [
+  {
+   "allow_edit": "Fleet Manager",
+   "doc_status": "0",
+   "is_optional_state": 0,
+   "send_email": 0,
+   "state": "Assigned",
+   "update_field": "",
+   "update_value": ""
+  },
+  {
+   "allow_edit": "Driver",
+   "doc_status": "0",
+   "is_optional_state": 0,
+   "send_email": 0,
+   "state": "In Progress",
+   "update_field": "",
+   "update_value": ""
+  },
+  {
+   "allow_edit": "Fleet Manager",
+   "doc_status": "0",
+   "is_optional_state": 0,
+   "send_email": 0,
+   "state": "Completed",
+   "update_field": "",
+   "update_value": ""
+  },
+  {
+   "allow_edit": "Fleet Manager",
+   "doc_status": "0",
+   "is_optional_state": 0,
+   "send_email": 0,
+   "state": "Reconciled",
+   "update_field": "",
+   "update_value": ""
+  }
+ ],
+ "transitions": [
+  {
+   "action": "Begin Trip",
+   "allow_self_approval": 1,
+   "allowed": "Driver",
+   "condition": "doc.start_odometer and doc.start_time",
+   "next_state": "In Progress",
+   "send_email_to_creator": 0,
+   "state": "Assigned"
+  },
+  {
+   "action": "Begin Trip",
+   "allow_self_approval": 1,
+   "allowed": "Fleet Manager",
+   "condition": "doc.start_odometer and doc.start_time",
+   "next_state": "In Progress",
+   "send_email_to_creator": 0,
+   "state": "Assigned"
+  },
+  {
+   "action": "Complete Trip",
+   "allow_self_approval": 1,
+   "allowed": "Driver",
+   "condition": "doc.end_odometer and doc.end_time and doc.end_odometer > doc.start_odometer",
+   "next_state": "Completed",
+   "send_email_to_creator": 0,
+   "state": "In Progress"
+  },
+  {
+   "action": "Complete Trip",
+   "allow_self_approval": 1,
+   "allowed": "Fleet Manager",
+   "condition": "doc.end_odometer and doc.end_time and doc.end_odometer > doc.start_odometer",
+   "next_state": "Completed",
+   "send_email_to_creator": 0,
+   "state": "In Progress"
+  },
+  {
+   "action": "Reconcile",
+   "allow_self_approval": 1,
+   "allowed": "Fleet Manager",
+   "condition": "",
+   "next_state": "Reconciled",
+   "send_email_to_creator": 0,
+   "state": "Completed"
+  }
+ ],
+ "workflow_name": "Trip Workflow",
+ "workflow_state_field": "status"
+}

@@ -1,0 +1,11 @@
+{
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "Dashboard Chart Source",
+ "module": "Fleet Log",
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "name": "Fuel Yield Trend",
+ "owner": "Administrator",
+ "source_name": "Fuel Yield Trend",
+ "timeseries": 1
+}

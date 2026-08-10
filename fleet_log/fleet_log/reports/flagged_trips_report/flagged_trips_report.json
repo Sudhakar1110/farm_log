@@ -1,0 +1,50 @@
+{
+ "add_total_row": 0,
+ "columns": [],
+ "creation": "2024-01-01 00:00:00.000000",
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [
+  {
+   "default": "Month Start",
+   "fieldname": "from_date",
+   "fieldtype": "Date",
+   "label": "From Date",
+   "mandatory": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "to_date",
+   "fieldtype": "Date",
+   "label": "To Date",
+   "mandatory": 1
+  },
+  {
+   "fieldname": "vehicle",
+   "fieldtype": "Link",
+   "label": "Vehicle",
+   "options": "Vehicle"
+  }
+ ],
+ "idx": 0,
+ "is_standard": "Yes",
+ "json": "",
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Fleet Log",
+ "name": "Flagged Trips Report",
+ "owner": "Administrator",
+ "query": "",
+ "query_method": "fleet_log.fleet_log.reports.flagged_trips_report.flagged_trips_report.execute",
+ "ref_doctype": "Trip",
+ "report_type": "Query Report",
+ "roles": [
+  {
+   "role": "Fleet Manager"
+  },
+  {
+   "role": "System Manager"
+  }
+ ]
+}
