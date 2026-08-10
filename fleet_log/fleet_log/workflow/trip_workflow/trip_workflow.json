@@ -38,7 +38,7 @@
   },
   {
    "allow_edit": "Fleet Manager",
-   "doc_status": "0",
+   "doc_status": "1",
    "is_optional_state": 0,
    "send_email": 0,
    "state": "Reconciled",

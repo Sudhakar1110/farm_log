@@ -37,8 +37,20 @@ class FuelLog(Document):
 			frappe.throw(_("Fuel Quantity must be greater than zero."))
 
 	def validate_linked_trip(self):
-		if self.trip and frappe.db.get_value("Trip", self.trip, "status") == "Reconciled":
+		if not self.trip:
+			return
+		trip_status, trip_vehicle = frappe.db.get_value(
+			"Trip", self.trip, ["status", "vehicle"]
+		) or (None, None)
+		if trip_status == "Reconciled":
 			frappe.throw(_("Fuel Logs cannot be added to a Reconciled Trip."))
+		if self.vehicle and trip_vehicle and self.vehicle != trip_vehicle:
+			frappe.throw(
+				_(
+					"Vehicle mismatch: Fuel Log is for {0} but Trip {1} is for {2}. "
+					"Set the correct vehicle or remove the Trip link."
+				).format(self.vehicle, self.trip, trip_vehicle)
+			)
 
 	def validate_odometer(self):
 		"""Reject odometer readings that would imply the vehicle went backwards."""

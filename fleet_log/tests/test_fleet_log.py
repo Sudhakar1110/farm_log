@@ -58,6 +58,17 @@ class TestFleetLog(IntegrationTestCase):
 			}
 		).insert(ignore_permissions=True)
 
+	def complete_trip(self, trip, end_odometer=1300):
+		"""Utility: run a trip through Assigned → In Progress → Completed."""
+		trip.status = "In Progress"
+		trip.save(ignore_permissions=True)
+		trip.end_odometer = end_odometer
+		trip.end_time = now_datetime()
+		trip.save(ignore_permissions=True)
+		trip.status = "Completed"
+		trip.save(ignore_permissions=True)
+		return trip
+
 	# ------------------------------------------------------------------ #
 	# tests
 	# ------------------------------------------------------------------ #
@@ -153,17 +164,17 @@ class TestFleetLog(IntegrationTestCase):
 		self.assertEqual(trip.yield_flag, "Critical")
 
 	def test_reconciled_trip_is_locked_for_drivers(self):
-		trip = self.make_trip()
-		trip.status = "In Progress"
-		trip.save(ignore_permissions=True)
-		trip.end_odometer = 1200
-		trip.end_time = now_datetime()
-		trip.save(ignore_permissions=True)
-		trip.status = "Completed"
-		trip.save(ignore_permissions=True)
+		"""Reconciled trips use docstatus=1 (submitted) so Frappe prevents edits
+		at the framework level. A Driver-role user cannot save."""
+		trip = self.complete_trip(self.make_trip(), end_odometer=1200)
 		trip.status = "Reconciled"
 		trip.save(ignore_permissions=True)
 		self.assertEqual(trip.status, "Reconciled")
+		self.assertEqual(trip.docstatus, 0)
+
+		# Now submit the trip (workflow action would do this, test it directly)
+		trip.submit()
+		self.assertEqual(trip.docstatus, 1)
 
 		driver_user = frappe.get_doc(
 			{
@@ -175,20 +186,81 @@ class TestFleetLog(IntegrationTestCase):
 			}
 		).insert(ignore_permissions=True)
 
-		# link the Driver record to the user so the reconciled lock (not the
-		# generic permission hook) is what blocks the edit
-		frappe.db.set_value("Driver", self.driver.name, "user", driver_user.name)
-
 		frappe.set_user(driver_user.name)
 		doc = frappe.get_doc("Trip", trip.name)
 		doc.purpose = "attempted edit"
-		# blocked either by the controller permission hook (PermissionError) or
-		# by the reconciled lock in validate (ValidationError)
-		with self.assertRaises((frappe.PermissionError, frappe.ValidationError)):
-			doc.save()
+		with self.assertRaises(frappe.PermissionError):
+			doc.save(ignore_permissions=True)
 
 		frappe.set_user("Administrator")
+		# Fleet Manager can cancel and amend
 		trip = frappe.get_doc("Trip", trip.name)
-		trip.purpose = "edited by manager"
+		trip.cancel()
+		self.assertEqual(trip.docstatus, 2)
+
+	def test_fuel_log_vehicle_mismatch_rejected(self):
+		"""A Fuel Log must have the same vehicle as its linked Trip."""
+		trip = self.make_trip()
+		trip.status = "In Progress"
 		trip.save(ignore_permissions=True)
-		self.assertEqual(trip.purpose, "edited by manager")
+
+		# Create a second vehicle
+		plate2 = f"TST-{frappe.generate_hash(6)}"
+		if is_erpnext_installed():
+			v2 = frappe.get_doc(
+				{
+					"doctype": "Vehicle",
+					"license_plate": plate2,
+					"make": "Other",
+					"model": "Other",
+					"fuel_type": "Diesel",
+					"uom": "Litre",
+				}
+			).insert(ignore_permissions=True)
+		else:
+			v2 = frappe.get_doc(
+				{"doctype": "Vehicle", "registration_number": plate2}
+			).insert(ignore_permissions=True)
+
+		with self.assertRaises(frappe.ValidationError):
+			frappe.get_doc(
+				{
+					"doctype": "Fuel Log",
+					"vehicle": v2.name,
+					"trip": trip.name,
+					"fuel_quantity": 10,
+					"fuel_cost": 100,
+					"odometer_at_fill": 1100,
+				}
+			).insert(ignore_permissions=True)
+
+	def test_dashboard_chart_source_no_data(self):
+		"""get_chart_data with no trips returns empty labels/datasets."""
+		from fleet_log.fleet_log.dashboard_chart_source.fuel_yield_trend.fuel_yield_trend import (
+			get_chart_data,
+		)
+
+		result = get_chart_data()
+		self.assertIn("labels", result)
+		self.assertIn("datasets", result)
+		self.assertIsInstance(result["labels"], list)
+		self.assertIsInstance(result["datasets"], list)
+
+	def test_dashboard_chart_source_with_data(self):
+		"""get_chart_data returns per-vehicle datasets after trips exist."""
+		trip = self.complete_trip(self.make_trip(), end_odometer=1300)
+
+		from fleet_log.fleet_log.dashboard_chart_source.fuel_yield_trend.fuel_yield_trend import (
+			get_chart_data,
+		)
+
+		# no fuel → yield 0 → trip_yield > 0 filter excludes it
+		result = get_chart_data()
+		vehicle_labels = {ds["name"] for ds in result["datasets"]}
+		self.assertIn(
+			frappe.db.get_value("Vehicle", self.vehicle.name, "license_plate")
+			or self.vehicle.name,
+			vehicle_labels,
+		)
+
+		self.assertGreater(len(result["labels"]), 0)

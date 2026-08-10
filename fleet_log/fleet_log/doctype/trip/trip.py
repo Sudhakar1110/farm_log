@@ -25,7 +25,6 @@ class Trip(Document):
 		self.validate_transitions()
 		self.warn_on_odometer_mismatch()
 		self.compute_metrics()
-		self.enforce_reconciled_lock()
 
 	def set_driver_if_empty(self):
 		"""Driver-role users are scoped to their own records, so a driver
@@ -34,9 +33,25 @@ class Trip(Document):
 			return
 		if "Driver" in frappe.get_roles() and not is_fleet_manager():
 			self.driver = get_driver_for_user() or self.driver
+			if not self.driver:
+				frappe.msgprint(
+					_(
+						"You have the Driver role but no Driver record is linked to your User. "
+						"Ask the Fleet Manager to link your User to a Driver record so you can "
+						"create Trips."
+					),
+					indicator="orange",
+					alert=True,
+				)
 
 	def on_update(self):
 		self.apply_state_side_effects()
+
+	def on_submit(self):
+		"""Reconciled (submitted) trips roll their yield into the vehicle's
+		rolling average. This fires from the workflow's Completed → Reconciled
+		transition (docstatus 0 → 1)."""
+		self.update_vehicle_average()
 
 	def on_trash(self):
 		if self.status == "Reconciled" and not is_fleet_manager():
@@ -107,9 +122,26 @@ class Trip(Document):
 			)
 
 	def compute_metrics(self):
-		"""Calculate distance, total fuel, yield and flag on trip close."""
+		"""Calculate distance, total fuel, yield and flag on trip close.
+
+		Only recomputes when the status is actually *transitioning* into a
+		completed state (or when odometer inputs changed on an already
+		completed trip), so routine saves on live trips never touch the
+		linked Fuel Logs.
+		"""
 		status = self.get_status()
 		if status not in COMPLETED_STATES:
+			return
+		previous_status = self.get_previous_status()
+		previous = self.get_doc_before_save()
+		odometer_changed = bool(
+			previous
+			and (
+				flt(previous.get("end_odometer") or 0) != flt(self.end_odometer or 0)
+				or flt(previous.get("start_odometer") or 0) != flt(self.start_odometer or 0)
+			)
+		)
+		if previous_status in COMPLETED_STATES and not odometer_changed:
 			return
 		if self.end_odometer is not None and self.start_odometer is not None:
 			self.distance_covered = flt(self.end_odometer) - flt(self.start_odometer)
@@ -117,17 +149,6 @@ class Trip(Document):
 		self.trip_yield = calculate_trip_yield(self.distance_covered, self.total_fuel_used)
 		self.yield_flag = evaluate_yield_flag(
 			self.trip_yield, get_vehicle_average_yield(self.vehicle)
-		)
-
-	def enforce_reconciled_lock(self):
-		"""Lock a Reconciled trip against further edits by non-managers."""
-		previous = self.get_doc_before_save()
-		if not previous or previous.get("status") != "Reconciled":
-			return
-		if is_fleet_manager():
-			return
-		frappe.throw(
-			_("Reconciled Trips are locked. Only the Fleet Manager can edit them.")
 		)
 
 	# ------------------------------------------------------------------ #
@@ -141,6 +162,6 @@ class Trip(Document):
 			# update the vehicle's odometer on completion
 			update_vehicle_odometer(self.vehicle, self.end_odometer)
 
-		if status == "Reconciled" and previous_status != "Reconciled":
-			# roll the reconciled yield into the vehicle's rolling average
-			update_vehicle_average_yield(self.vehicle)
+	def update_vehicle_average(self):
+		# roll the reconciled yield into the vehicle's rolling average
+		update_vehicle_average_yield(self.vehicle)

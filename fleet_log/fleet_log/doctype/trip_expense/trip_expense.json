@@ -15,7 +15,8 @@
   "amount",
   "receipt",
   "section_break_erpnext",
-  "erpnext_expense_claim"
+  "erpnext_expense_claim",
+  "erpnext_journal_entry"
  ],
  "fields": [
   {
@@ -48,6 +49,7 @@
   {
    "fieldname": "amount",
    "fieldtype": "Currency",
+   "in_list_view": 1,
    "label": "Amount",
    "reqd": 1
   },
@@ -66,6 +68,13 @@
    "fieldtype": "Link",
    "label": "ERPNext Expense Claim",
    "options": "Expense Claim",
+   "read_only": 1
+  },
+  {
+   "fieldname": "erpnext_journal_entry",
+   "fieldtype": "Data",
+   "label": "ERPNext Journal Entry",
+   "no_copy": 1,
    "read_only": 1
   }
  ],
