@@ -146,6 +146,13 @@ The repo ships a GitHub Actions workflow (`.github/workflows/ci.yml`) that spins
 
 > **Install order still matters.** Install ERPNext *before* fleet_log (or on a site that already has it). If ERPNext is installed later, `after_migrate` logs a clear error pointing to a reinstall so the app can switch to ERPNext mode.
 
+> **Editing a standard fixture?** Frappe skips re-importing a fixture unless its
+> `"modified"` is *newer* than the record already in the site DB, and the
+> fixtures in this app ship with a static `"modified"` date. Whenever you change
+> any fixture (workspace, reports, workflow, chart, dashboard, print formats, web
+> forms), **bump its `"modified"` to today** so `bench migrate` re-imports it on
+> already-installed sites.
+
 Project layout (standard bench app layout — `fleet_log/` is the importable package; `fleet_log/fleet_log/` is the module folder that `sync_for` scans for doctypes):
 
 ```

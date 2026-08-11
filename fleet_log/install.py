@@ -441,7 +441,21 @@ def create_number_cards():
 		for card in NUMBER_CARDS:
 			if card["label"] not in existing:
 				workspace.append("number_cards", {"number_card_name": card["label"]})
-		if workspace.number_cards:
+
+		# Workspace Link only accepts DocType / Page / Report. Older fixture
+		# versions carried a Dashboard link row; prune any such stale rows from
+		# the DB record so the workspace save never trips select validation.
+		valid_link_types = {"DocType", "Page", "Report"}
+		links = [
+			row
+			for row in (workspace.links or [])
+			if not row.link_type or row.link_type in valid_link_types
+		]
+		pruned = len(links) != len(workspace.links or [])
+		if pruned:
+			workspace.links = links
+
+		if workspace.number_cards or pruned:
 			workspace.save(ignore_permissions=True)
 	frappe.clear_cache()
 
@@ -479,14 +493,14 @@ def create_web_forms():
 # Workspace
 # ---------------------------------------------------------------------------
 def create_workspace():
-	"""Import the Fleet Log workspace fixture (idempotent).
+	"""Import the Fleet Log workspace fixture (idempotent via fixture timestamps).
 
 	The workspace provides the Fleet Log page in the Frappe UI, including the
 	Fuel Yield Trend line chart and links to all doctypes and reports in the
-	module.
+	module. import_file_by_path skips the import when the existing DB record is
+	at least as new as the fixture, so this re-imports only when the fixture
+	changes (bump the fixture's "modified" field when editing it).
 	"""
-	if frappe.db.exists("Workspace", "Fleet Log"):
-		return
 	path = frappe.get_app_path(
 		"fleet_log", "fleet_log", "workspace", "fleet_log", "fleet_log.json"
 	)
