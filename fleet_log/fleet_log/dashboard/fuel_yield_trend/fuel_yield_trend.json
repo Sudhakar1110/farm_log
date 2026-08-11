@@ -1,0 +1,57 @@
+{
+ "cards": [
+  {
+   "card": "Fuel Cost This Month",
+   "doctype": "Number Card Link",
+   "parent": "Fuel Yield Trend",
+   "parentfield": "cards",
+   "parenttype": "Dashboard",
+   "width": "Half"
+  },
+  {
+   "card": "Trips Completed",
+   "doctype": "Number Card Link",
+   "parent": "Fuel Yield Trend",
+   "parentfield": "cards",
+   "parenttype": "Dashboard",
+   "width": "Half"
+  },
+  {
+   "card": "Flagged Trips",
+   "doctype": "Number Card Link",
+   "parent": "Fuel Yield Trend",
+   "parentfield": "cards",
+   "parenttype": "Dashboard",
+   "width": "Half"
+  },
+  {
+   "card": "Fleet Size",
+   "doctype": "Number Card Link",
+   "parent": "Fuel Yield Trend",
+   "parentfield": "cards",
+   "parenttype": "Dashboard",
+   "width": "Half"
+  }
+ ],
+ "charts": [
+  {
+   "chart": "Fuel Yield Trend",
+   "doctype": "Dashboard Chart Link",
+   "parent": "Fuel Yield Trend",
+   "parentfield": "charts",
+   "parenttype": "Dashboard",
+   "width": "Full"
+  }
+ ],
+ "creation": "2024-01-01 00:00:00.000000",
+ "dashboard_name": "Fuel Yield Trend",
+ "docstatus": 0,
+ "doctype": "Dashboard",
+ "idx": 0,
+ "is_standard": 1,
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Fleet Log",
+ "name": "Fuel Yield Trend",
+ "owner": "Administrator"
+}

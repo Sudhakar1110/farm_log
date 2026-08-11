@@ -358,26 +358,29 @@ def create_reports():
 # Dashboard Chart
 # ---------------------------------------------------------------------------
 def create_dashboard_chart():
-	"""Import the Fuel Yield Trend Dashboard Chart fixture (idempotent).
+	"""Import the chart source, chart and dashboard fixtures (idempotent).
 
-	The fixture references the custom "Fuel Yield Trend" Dashboard Chart Source,
-	which provides per-vehicle trip_yield line chart data. The Dashboard Chart
-	is then linked from the Fleet Log workspace.
+	- "Fuel Yield Trend" Dashboard Chart Source (custom source returning
+	  per-vehicle trip_yield data)
+	- "Fuel Yield Trend" Dashboard Chart referencing that source
+	- "Fuel Yield Trend" Dashboard embedding the chart and the KPI cards
 
-	The chart source is imported first: during `install-app` the site's module
-	map can skip the app being installed, so the source is not guaranteed to
-	exist from the standard sync yet.
+	Each piece is imported independently because the workspace fixture links to
+	all three by name, and a partial install may already have some of them.
+	During `install-app` the site's module map can skip the app being installed,
+	so none of them can be assumed to exist from the standard sync.
 	"""
-	if frappe.db.exists("Dashboard Chart", "Fuel Yield Trend"):
-		return
-	source_path = frappe.get_app_path(
-		"fleet_log", "fleet_log", "dashboard_chart_source", "fuel_yield_trend", "fuel_yield_trend.json"
-	)
-	import_file_by_path(source_path)
-	path = frappe.get_app_path(
-		"fleet_log", "fleet_log", "dashboard_chart", "fuel_yield_trend", "fuel_yield_trend.json"
-	)
-	import_file_by_path(path)
+	for doctype, folder in (
+		("Dashboard Chart Source", "dashboard_chart_source"),
+		("Dashboard Chart", "dashboard_chart"),
+		("Dashboard", "dashboard"),
+	):
+		if frappe.db.exists(doctype, "Fuel Yield Trend"):
+			continue
+		path = frappe.get_app_path(
+			"fleet_log", "fleet_log", folder, "fuel_yield_trend", "fuel_yield_trend.json"
+		)
+		import_file_by_path(path)
 	frappe.clear_cache()
 
 

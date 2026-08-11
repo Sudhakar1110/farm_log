@@ -164,7 +164,8 @@ fleet_log/
 │   ├── web_form/trip_log/          # driver-facing Trip Log web form
 │   ├── workspace/fleet_log/        # workspace incl. KPI number cards
 │   ├── dashboard_chart/            # Fuel Yield Trend chart
-│   └── dashboard_chart_source/     # chart data source (JS/Python)
+│   ├── dashboard_chart_source/     # chart data source (JS/Python)
+│   └── dashboard/                  # Fuel Yield Trend dashboard (chart + KPI cards)
 ├── fallback_doctypes/              # Vehicle/Driver fixtures (standalone mode only)
 ├── tests/                          # integration tests
 ├── translations/                   # app translations (empty)
