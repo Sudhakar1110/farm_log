@@ -42,7 +42,7 @@
  "name": "Fuel Price Trend",
  "owner": "Administrator",
  "query": "",
- "query_method": "fleet_log.reports.fuel_price_trend.fuel_price_trend.execute",
+ "query_method": "fleet_log.fleet_log.reports.fuel_price_trend.fuel_price_trend.execute",
  "ref_doctype": "Fuel Log",
  "report_type": "Query Report",
  "roles": [

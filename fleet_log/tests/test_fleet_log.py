@@ -258,7 +258,7 @@ class TestFleetLog(IntegrationTestCase):
 
 	def test_dashboard_chart_source_no_data(self):
 		"""get_chart_data with no trips returns empty labels/datasets."""
-		from fleet_log.dashboard_chart_source.fuel_yield_trend.fuel_yield_trend import (
+		from fleet_log.fleet_log.dashboard_chart_source.fuel_yield_trend.fuel_yield_trend import (
 			get_chart_data,
 		)
 
@@ -272,7 +272,7 @@ class TestFleetLog(IntegrationTestCase):
 		"""get_chart_data returns per-vehicle datasets after trips exist."""
 		trip = self.complete_trip(self.make_trip(), end_odometer=1300)
 
-		from fleet_log.dashboard_chart_source.fuel_yield_trend.fuel_yield_trend import (
+		from fleet_log.fleet_log.dashboard_chart_source.fuel_yield_trend.fuel_yield_trend import (
 			get_chart_data,
 		)
 
@@ -686,12 +686,12 @@ class TestFleetLog(IntegrationTestCase):
 			}
 		).insert(ignore_permissions=True)
 
-		from fleet_log.reports.cost_per_vehicle.cost_per_vehicle import execute as c1
-		from fleet_log.reports.driver_mileage_report.driver_mileage_report import execute as c2
-		from fleet_log.reports.flagged_trips_report.flagged_trips_report import execute as c3
-		from fleet_log.reports.fuel_cost_per_driver.fuel_cost_per_driver import execute as c4
-		from fleet_log.reports.fuel_price_trend.fuel_price_trend import execute as c5
-		from fleet_log.reports.fuel_yield_trend.fuel_yield_trend import execute as c6
+		from fleet_log.fleet_log.reports.cost_per_vehicle.cost_per_vehicle import execute as c1
+		from fleet_log.fleet_log.reports.driver_mileage_report.driver_mileage_report import execute as c2
+		from fleet_log.fleet_log.reports.flagged_trips_report.flagged_trips_report import execute as c3
+		from fleet_log.fleet_log.reports.fuel_cost_per_driver.fuel_cost_per_driver import execute as c4
+		from fleet_log.fleet_log.reports.fuel_price_trend.fuel_price_trend import execute as c5
+		from fleet_log.fleet_log.reports.fuel_yield_trend.fuel_yield_trend import execute as c6
 
 		filters = {
 			"from_date": "2000-01-01",

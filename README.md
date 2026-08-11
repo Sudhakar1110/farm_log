@@ -146,7 +146,7 @@ The repo ships a GitHub Actions workflow (`.github/workflows/ci.yml`) that spins
 
 > **Install order still matters.** Install ERPNext *before* fleet_log (or on a site that already has it). If ERPNext is installed later, `after_migrate` logs a clear error pointing to a reinstall so the app can switch to ERPNext mode.
 
-Project layout (standard bench app layout — `fleet_log/` is the importable package):
+Project layout (standard bench app layout — `fleet_log/` is the importable package; `fleet_log/fleet_log/` is the module folder that `sync_for` scans for doctypes):
 
 ```
 fleet_log/
@@ -156,13 +156,15 @@ fleet_log/
 ├── api.py                          # whitelisted REST endpoints (mobile field capture)
 ├── data_import.py                  # CSV bulk import helpers
 ├── config/desktop.py               # desk module icon/label
-├── doctype/{trip, fuel_log, trip_expense, vehicle, driver}/
-├── workflow/trip_workflow/         # Trip workflow fixture
-├── reports/                        # the six query reports
-├── print_format/                   # Trip / Fuel Log / Trip Expense print formats
-├── web_form/trip_log/              # driver-facing Trip Log web form
-├── workspace/fleet_log/            # workspace incl. KPI number cards
-├── dashboard_chart/                # Fuel Yield Trend chart
+├── fleet_log/                      # module "Fleet Log" (doctypes + fixtures)
+│   ├── doctype/{trip, fuel_log, trip_expense, vehicle, driver}/
+│   ├── workflow/trip_workflow/     # Trip workflow fixture
+│   ├── reports/                    # the six query reports
+│   ├── print_format/               # Trip / Fuel Log / Trip Expense print formats
+│   ├── web_form/trip_log/          # driver-facing Trip Log web form
+│   ├── workspace/fleet_log/        # workspace incl. KPI number cards
+│   ├── dashboard_chart/            # Fuel Yield Trend chart
+│   └── dashboard_chart_source/     # chart data source (JS/Python)
 ├── fallback_doctypes/              # Vehicle/Driver fixtures (standalone mode only)
 ├── tests/                          # integration tests
 ├── translations/                   # app translations (empty)

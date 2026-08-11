@@ -36,7 +36,7 @@
  "name": "Driver Mileage Report",
  "owner": "Administrator",
  "query": "",
- "query_method": "fleet_log.reports.driver_mileage_report.driver_mileage_report.execute",
+ "query_method": "fleet_log.fleet_log.reports.driver_mileage_report.driver_mileage_report.execute",
  "ref_doctype": "Trip",
  "report_type": "Query Report",
  "roles": [

@@ -19,8 +19,10 @@ def after_install():
 	print formats and web forms are always created.
 	"""
 	create_roles()
+	ensure_app_doctypes()
 	create_workflow()
 	create_vehicle_driver_support()
+	create_reports()
 	create_dashboard_chart()
 	create_workspace()
 	create_number_cards()  # needs the workspace to exist so cards can be attached
@@ -36,13 +38,38 @@ def after_migrate():
 	"""
 	check_fallback_conflict()
 	create_roles()
+	ensure_app_doctypes()
 	create_workflow()
 	create_vehicle_driver_support()
+	create_reports()
 	create_dashboard_chart()
 	create_workspace()
 	create_number_cards()
 	create_print_formats()
 	create_web_forms()
+
+
+def ensure_app_doctypes():
+	"""Ensure this app's doctypes exist before fixtures reference them.
+
+	The installer calls sync_for() before after_install, but on a fresh install
+	the site's module map may not include this app yet, so that sync can skip it.
+	Sync again here and, as a fallback, import the doctype fixtures directly
+	(import_file_by_path is idempotent, and DocType.on_update creates the tables).
+	"""
+	from frappe.model.sync import sync_for
+
+	sync_for("fleet_log")
+	for folder, name in (
+		("trip", "Trip"),
+		("fuel_log", "Fuel Log"),
+		("trip_expense", "Trip Expense"),
+	):
+		if frappe.db.exists("DocType", name):
+			continue
+		path = frappe.get_app_path("fleet_log", "fleet_log", "doctype", folder, f"{folder}.json")
+		import_file_by_path(path)
+	frappe.clear_cache()
 
 
 # ---------------------------------------------------------------------------
@@ -282,7 +309,7 @@ def create_workflow():
 	updated in place so existing sites pick up the new fixture.
 	"""
 	path = frappe.get_app_path(
-		"fleet_log", "workflow", "trip_workflow", "trip_workflow.json"
+		"fleet_log", "fleet_log", "workflow", "trip_workflow", "trip_workflow.json"
 	)
 	with open(path, encoding="utf-8") as f:
 		fixture = json.load(f)
@@ -310,6 +337,24 @@ def create_workflow():
 
 
 # ---------------------------------------------------------------------------
+# Reports
+# ---------------------------------------------------------------------------
+def create_reports():
+	"""Import the app's query reports (idempotent; also auto-synced on migrate)."""
+	for name in (
+		"cost_per_vehicle",
+		"driver_mileage_report",
+		"flagged_trips_report",
+		"fuel_cost_per_driver",
+		"fuel_price_trend",
+		"fuel_yield_trend",
+	):
+		path = frappe.get_app_path("fleet_log", "fleet_log", "reports", name, f"{name}.json")
+		import_file_by_path(path)
+	frappe.clear_cache()
+
+
+# ---------------------------------------------------------------------------
 # Dashboard Chart
 # ---------------------------------------------------------------------------
 def create_dashboard_chart():
@@ -318,11 +363,19 @@ def create_dashboard_chart():
 	The fixture references the custom "Fuel Yield Trend" Dashboard Chart Source,
 	which provides per-vehicle trip_yield line chart data. The Dashboard Chart
 	is then linked from the Fleet Log workspace.
+
+	The chart source is imported first: during `install-app` the site's module
+	map can skip the app being installed, so the source is not guaranteed to
+	exist from the standard sync yet.
 	"""
 	if frappe.db.exists("Dashboard Chart", "Fuel Yield Trend"):
 		return
+	source_path = frappe.get_app_path(
+		"fleet_log", "fleet_log", "dashboard_chart_source", "fuel_yield_trend", "fuel_yield_trend.json"
+	)
+	import_file_by_path(source_path)
 	path = frappe.get_app_path(
-		"fleet_log", "dashboard_chart", "fuel_yield_trend", "fuel_yield_trend.json"
+		"fleet_log", "fleet_log", "dashboard_chart", "fuel_yield_trend", "fuel_yield_trend.json"
 	)
 	import_file_by_path(path)
 	frappe.clear_cache()
@@ -403,7 +456,7 @@ def create_print_formats():
 		if frappe.db.exists("Print Format", name):
 			continue
 		path = frappe.get_app_path(
-			"fleet_log", "print_format", folder, f"{folder}.json"
+			"fleet_log", "fleet_log", "print_format", folder, f"{folder}.json"
 		)
 		import_file_by_path(path)
 	frappe.clear_cache()
@@ -414,7 +467,7 @@ def create_web_forms():
 	for name, folder in (("Trip Log", "trip_log"),):
 		if frappe.db.exists("Web Form", name):
 			continue
-		path = frappe.get_app_path("fleet_log", "web_form", folder, f"{folder}.json")
+		path = frappe.get_app_path("fleet_log", "fleet_log", "web_form", folder, f"{folder}.json")
 		import_file_by_path(path)
 	frappe.clear_cache()
 
@@ -432,7 +485,7 @@ def create_workspace():
 	if frappe.db.exists("Workspace", "Fleet Log"):
 		return
 	path = frappe.get_app_path(
-		"fleet_log", "workspace", "fleet_log", "fleet_log.json"
+		"fleet_log", "fleet_log", "workspace", "fleet_log", "fleet_log.json"
 	)
 	import_file_by_path(path)
 	frappe.clear_cache()
