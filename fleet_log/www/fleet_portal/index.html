@@ -226,15 +226,33 @@ i[data-lucide] { flex-shrink: 0; }
 	display: flex; flex-direction: column;
 	padding: var(--sp-6) var(--sp-5) var(--sp-5);
 }
-.login-brand { display: flex; align-items: center; gap: var(--sp-3); margin-bottom: var(--sp-7); }
-.brand-mark {
-	width: 38px; height: 38px; border-radius: var(--r-md);
-	background: var(--gradient); display: flex; align-items: center; justify-content: center;
-	color: var(--navy-dark); box-shadow: 0 4px 16px -4px rgba(20, 241, 177, .5);
+.login-brand { margin-bottom: var(--sp-6); }
+
+/* ------------------------------ Bizaxl logo ------------------------------ */
+.bx-logo { display: inline-flex; flex-direction: column; align-items: center; gap: var(--sp-2); }
+.bx-word {
+	display: inline-flex; align-items: flex-end;
+	font-weight: 700; line-height: 1; letter-spacing: -.02em;
+	color: var(--white);
 }
-.brand-name { font-size: 18px; font-weight: 500; letter-spacing: -.01em; }
-.brand-name b { font-weight: 700; color: var(--mint); }
-.brand-sub { font-size: 12px; color: rgba(255, 255, 255, .55); }
+.bx-word > * { margin-right: -.03em; }
+.bx-word > *:last-child { margin-right: 0; }
+.bx-glyph { display: inline-block; line-height: 1; }
+.bx-i { position: relative; display: inline-flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+.bx-spark {
+	position: absolute; top: -.1em; left: 50%; transform: translateX(-50%);
+	width: .38em; height: .38em; color: var(--white); flex-shrink: 0;
+}
+.bx-x {
+	background: linear-gradient(135deg, var(--mint) 0%, var(--blue) 100%);
+	-webkit-background-clip: text; background-clip: text;
+	color: transparent;
+}
+.bx-tagline { font-size: 12px; font-weight: 500; letter-spacing: .04em; color: rgba(255, 255, 255, .82); }
+.bx-logo-lg .bx-word { font-size: 34px; }
+.bx-logo-lg .bx-tagline { font-size: 13px; }
+.bx-logo-sm .bx-word { font-size: 21px; }
+.bx-logo-sm .bx-tagline { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255, 255, 255, .55); }
 
 .login-grid {
 	display: grid; grid-template-columns: 1.15fr .85fr; gap: var(--sp-7);
@@ -267,7 +285,7 @@ i[data-lucide] { flex-shrink: 0; }
 	padding: var(--sp-5) var(--sp-4);
 }
 .sidebar-brand { display: flex; align-items: center; gap: var(--sp-3); padding: 0 var(--sp-2) var(--sp-5); border-bottom: 1px solid rgba(255, 255, 255, .08); margin-bottom: var(--sp-4); }
-.sidebar-brand .brand-sub { color: rgba(255, 255, 255, .45); }
+.sidebar-brand.bx-logo { align-items: flex-start; gap: var(--sp-2); }
 .sidebar-nav { display: flex; flex-direction: column; gap: 2px; flex: 1; }
 .nav-item {
 	display: flex; align-items: center; gap: var(--sp-3);
@@ -530,9 +548,17 @@ table.data tbody tr:hover { background: #FAFAFB; }
 
 	<!-- ============================== LOGIN ============================== -->
 	<div id="login-view" class="login-view hidden">
-		<div class="login-brand">
-			<div class="brand-mark"><i data-lucide="truck" width="18" height="18"></i></div>
-			<span class="brand-name">Bizaxl <b>Fleet</b></span>
+		<div class="login-brand bx-logo bx-logo-lg">
+			<span class="bx-word" aria-label="bizaxl">
+				<span class="bx-glyph">b</span>
+				<span class="bx-i">
+					<svg class="bx-spark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
+					<span class="bx-glyph">i</span>
+				</span>
+				<span class="bx-glyph">z</span><span class="bx-glyph">a</span>
+				<span class="bx-glyph bx-x">x</span><span class="bx-glyph">l</span>
+			</span>
+			<span class="bx-tagline">Accelerate Your Growth</span>
 		</div>
 
 		<div class="login-grid">
@@ -577,12 +603,17 @@ table.data tbody tr:hover { background: #FAFAFB; }
 	<div id="app" class="app hidden">
 
 		<aside class="sidebar" id="sidebar">
-			<div class="sidebar-brand">
-				<div class="brand-mark"><i data-lucide="truck" width="18" height="18"></i></div>
-				<div>
-					<div class="brand-name">Bizaxl <b>Fleet</b></div>
-					<div class="brand-sub">Trip &amp; fuel log</div>
-				</div>
+			<div class="sidebar-brand bx-logo bx-logo-sm">
+				<span class="bx-word" aria-label="bizaxl">
+					<span class="bx-glyph">b</span>
+					<span class="bx-i">
+						<svg class="bx-spark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
+						<span class="bx-glyph">i</span>
+					</span>
+					<span class="bx-glyph">z</span><span class="bx-glyph">a</span>
+					<span class="bx-glyph bx-x">x</span><span class="bx-glyph">l</span>
+				</span>
+				<span class="bx-tagline">Accelerate Your Growth</span>
 			</div>
 
 			<nav class="sidebar-nav">
