@@ -139,17 +139,6 @@
    "type": "Link"
   },
   {
-   "dependencies": "",
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Fuel Yield Trend",
-   "link_count": 0,
-   "link_to": "Fuel Yield Trend",
-   "link_type": "Dashboard",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
    "hidden": 0,
    "is_query_report": 0,
    "label": "Trip Expenses",
