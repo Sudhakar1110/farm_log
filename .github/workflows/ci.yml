@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  tests:
+    name: Bench tests (Frappe v15)
+    runs-on: ubuntu-latest
+    services:
+      mariadb:
+        image: mariadb:10.6
+        env:
+          MARIADB_ROOT_PASSWORD: travis
+          MARIADB_DATABASE: test_fleet_log
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=5s --health-retries=5
+
+    steps:
+      - name: Clone
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install bench
+        run: |
+          pip install frappe-bench
+          python -m pip install --upgrade pip
+
+      - name: Init bench
+        run: |
+          bench init --skip-redis-config-generation --skip-redis-bootstrap-generation --python $(which python) ~/bench
+
+      - name: Add app & create site
+        run: |
+          cd ~/bench
+          bench get-app fleet_log ${{ github.workspace }}
+          bench --site tests.localhost new-site \
+            --mariadb-root-password travis \
+            --no-mariadb-socket \
+            --admin-password admin
+          bench --site tests.localhost install-app fleet_log
+
+      - name: Run tests
+        run: |
+          cd ~/bench
+          bench --site tests.localhost run-tests --app fleet_log

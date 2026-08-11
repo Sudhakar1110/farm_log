@@ -5,7 +5,7 @@ with open("requirements.txt") as f:
 
 setup(
     name="fleet_log",
-    version="0.0.1",
+    version="0.1.0",
     description="Fleet trip, odometer, fuel log and fuel yield tracking for Frappe v15 (optional ERPNext v15 integration).",
     author="Fleet Log Contributors",
     license="MIT",

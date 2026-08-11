@@ -14,13 +14,16 @@
   "column_break_3",
   "fuel_quantity",
   "fuel_cost",
+  "fuel_type",
+  "fuel_vendor",
   "odometer_at_fill",
   "section_break_fill",
   "filled_by",
   "receipt",
   "column_break_9",
   "fill_up_yield",
-  "sanity_flag"
+  "sanity_flag",
+  "price_per_litre"
  ],
  "fields": [
   {
@@ -65,6 +68,19 @@
    "reqd": 1
   },
   {
+   "fieldname": "fuel_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Fuel Type",
+   "options": "Petrol\nDiesel\nCNG\nElectric"
+  },
+  {
+   "fieldname": "fuel_vendor",
+   "fieldtype": "Data",
+   "label": "Fuel Vendor / Station"
+  },
+  {
    "fieldname": "odometer_at_fill",
    "fieldtype": "Float",
    "label": "Odometer at Fill",
@@ -106,6 +122,13 @@
    "in_list_view": 1,
    "label": "Sanity Flag",
    "options": "OK\nSuspicious",
+   "read_only": 1
+  },
+  {
+   "fieldname": "price_per_litre",
+   "fieldtype": "Currency",
+   "label": "Price per Litre",
+   "precision": "4",
    "read_only": 1
   }
  ],

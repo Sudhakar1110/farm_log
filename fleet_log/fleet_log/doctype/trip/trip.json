@@ -14,12 +14,16 @@
   "status",
   "column_break_4",
   "purpose",
+  "trip_type",
+  "company",
   "section_break_route",
   "start_location",
+  "start_geo",
   "start_odometer",
   "start_time",
   "column_break_9",
   "end_location",
+  "end_geo",
   "end_odometer",
   "end_time",
   "section_break_performance",
@@ -62,7 +66,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Assigned\nIn Progress\nCompleted\nReconciled"
+   "options": "Assigned\nIn Progress\nCompleted\nReconciled\nCancelled"
   },
   {
    "fieldname": "column_break_4",
@@ -74,6 +78,20 @@
    "label": "Purpose"
   },
   {
+   "default": "Other",
+   "fieldname": "trip_type",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Trip Type",
+   "options": "Field Work\nDelivery\nPersonal\nOther"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company"
+  },
+  {
    "fieldname": "section_break_route",
    "fieldtype": "Section Break",
    "label": "Route & Odometer"
@@ -82,6 +100,11 @@
    "fieldname": "start_location",
    "fieldtype": "Data",
    "label": "Start Location"
+  },
+  {
+   "fieldname": "start_geo",
+   "fieldtype": "Geolocation",
+   "label": "Start Location (GPS)"
   },
   {
    "fieldname": "start_odometer",
@@ -104,6 +127,11 @@
    "fieldname": "end_location",
    "fieldtype": "Data",
    "label": "End Location"
+  },
+  {
+   "fieldname": "end_geo",
+   "fieldtype": "Geolocation",
+   "label": "End Location (GPS)"
   },
   {
    "fieldname": "end_odometer",

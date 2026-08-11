@@ -14,7 +14,13 @@
   "fuel_type",
   "column_break_4",
   "current_odometer",
-  "average_yield"
+  "average_yield",
+  "section_break_service",
+  "service_interval_km",
+  "service_interval_months",
+  "column_break_10",
+  "last_service_odometer",
+  "last_service_date"
  ],
  "fields": [
   {
@@ -60,6 +66,40 @@
    "label": "Average Yield (km/litre)",
    "precision": "2",
    "read_only": 1
+  },
+  {
+   "fieldname": "section_break_service",
+   "fieldtype": "Section Break",
+   "label": "Service Schedule"
+  },
+  {
+   "default": "10000",
+   "description": "Reminder when the odometer crosses the last service odometer plus this interval.",
+   "fieldname": "service_interval_km",
+   "fieldtype": "Int",
+   "label": "Service Interval (km)"
+  },
+  {
+   "default": "6",
+   "description": "Reminder when the last service date plus this many months passes.",
+   "fieldname": "service_interval_months",
+   "fieldtype": "Int",
+   "label": "Service Interval (months)"
+  },
+  {
+   "fieldname": "column_break_10",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "last_service_odometer",
+   "fieldtype": "Float",
+   "label": "Last Service Odometer",
+   "precision": "2"
+  },
+  {
+   "fieldname": "last_service_date",
+   "fieldtype": "Date",
+   "label": "Last Service Date"
   }
  ],
  "icon": "fa fa-truck",

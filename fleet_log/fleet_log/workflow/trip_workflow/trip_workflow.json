@@ -7,13 +7,13 @@
  "modified_by": "Administrator",
  "name": "Trip Workflow",
  "owner": "Administrator",
- "send_email_alert": 0,
+ "send_email_alert": 1,
  "states": [
   {
    "allow_edit": "Fleet Manager",
    "doc_status": "0",
    "is_optional_state": 0,
-   "send_email": 0,
+   "send_email": 1,
    "state": "Assigned",
    "update_field": "",
    "update_value": ""
@@ -22,7 +22,7 @@
    "allow_edit": "Driver",
    "doc_status": "0",
    "is_optional_state": 0,
-   "send_email": 0,
+   "send_email": 1,
    "state": "In Progress",
    "update_field": "",
    "update_value": ""
@@ -31,7 +31,7 @@
    "allow_edit": "Fleet Manager",
    "doc_status": "0",
    "is_optional_state": 0,
-   "send_email": 0,
+   "send_email": 1,
    "state": "Completed",
    "update_field": "",
    "update_value": ""
@@ -40,8 +40,17 @@
    "allow_edit": "Fleet Manager",
    "doc_status": "1",
    "is_optional_state": 0,
-   "send_email": 0,
+   "send_email": 1,
    "state": "Reconciled",
+   "update_field": "",
+   "update_value": ""
+  },
+  {
+   "allow_edit": "Fleet Manager",
+   "doc_status": "0",
+   "is_optional_state": 0,
+   "send_email": 1,
+   "state": "Cancelled",
    "update_field": "",
    "update_value": ""
   }
@@ -89,6 +98,33 @@
    "allowed": "Fleet Manager",
    "condition": "",
    "next_state": "Reconciled",
+   "send_email_to_creator": 0,
+   "state": "Completed"
+  },
+  {
+   "action": "Cancel Trip",
+   "allow_self_approval": 1,
+   "allowed": "Fleet Manager",
+   "condition": "",
+   "next_state": "Cancelled",
+   "send_email_to_creator": 0,
+   "state": "Assigned"
+  },
+  {
+   "action": "Cancel Trip",
+   "allow_self_approval": 1,
+   "allowed": "Fleet Manager",
+   "condition": "",
+   "next_state": "Cancelled",
+   "send_email_to_creator": 0,
+   "state": "In Progress"
+  },
+  {
+   "action": "Cancel Trip",
+   "allow_self_approval": 1,
+   "allowed": "Fleet Manager",
+   "condition": "",
+   "next_state": "Cancelled",
    "send_email_to_creator": 0,
    "state": "Completed"
   }

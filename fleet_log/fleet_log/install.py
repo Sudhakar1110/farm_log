@@ -1,3 +1,4 @@
+import json
 import os
 
 import frappe
@@ -14,13 +15,17 @@ def after_install():
 
 	- ERPNext present -> extend ERPNext's Vehicle / Driver via Custom Fields.
 	- Plain Frappe    -> create self-contained fallback Vehicle / Driver doctypes.
-	Roles, the Trip workflow, the dashboard chart and the workspace are always created.
+	Roles, the Trip workflow, the dashboard chart, number cards, the workspace,
+	print formats and web forms are always created.
 	"""
 	create_roles()
 	create_workflow()
 	create_vehicle_driver_support()
 	create_dashboard_chart()
 	create_workspace()
+	create_number_cards()  # needs the workspace to exist so cards can be attached
+	create_print_formats()
+	create_web_forms()
 
 
 def after_migrate():
@@ -29,11 +34,35 @@ def after_migrate():
 	This keeps the environment consistent if `after_install` was interrupted,
 	or if the site's ERPNext status changes between install and migrate.
 	"""
+	check_fallback_conflict()
 	create_roles()
 	create_workflow()
 	create_vehicle_driver_support()
 	create_dashboard_chart()
 	create_workspace()
+	create_number_cards()
+	create_print_formats()
+	create_web_forms()
+
+
+# ---------------------------------------------------------------------------
+# Install-order safety
+# ---------------------------------------------------------------------------
+def check_fallback_conflict():
+	"""Warn (loudly) when ERPNext was installed AFTER fleet_log while the
+	fallback Vehicle/Driver doctypes were in use. Those collide with ERPNext's
+	own doctypes; the fix is to reinstall fleet_log (see README)."""
+	if not is_erpnext_installed():
+		return
+	if frappe.db.exists("DocType", {"name": "Vehicle", "module": "Fleet Log"}):
+		message = (
+			"fleet_log was installed in standalone mode and ERPNext was added later. "
+			"The fallback Vehicle/Driver doctypes now conflict with ERPNext's own. "
+			"Please back up your data, uninstall fleet_log, and reinstall it so it "
+			"switches to ERPNext mode (Custom Fields instead of fallback doctypes)."
+		)
+		frappe.log_error(message=message, title="Fleet Log: fallback doctype conflict")
+		print(f"\n[fleet_log] WARNING: {message}\n")
 
 
 # ---------------------------------------------------------------------------
@@ -45,6 +74,58 @@ def create_vehicle_driver_support():
 		ensure_driver_can_read_vehicles()
 	else:
 		import_fallback_doctypes()
+		ensure_fallback_vehicle_fields()
+
+
+def ensure_fallback_vehicle_fields():
+	"""Upgrade path for sites that already imported the fallback Vehicle
+	doctype before the service-schedule fields existed.
+
+	The fallback fixtures are outside the standard sync path and only imported
+	when the doctype is missing, so existing installs would never receive new
+	fields. Add any missing ones as Custom Fields instead.
+	"""
+	if not frappe.db.exists("DocType", {"name": "Vehicle", "module": "Fleet Log"}):
+		return
+	if frappe.get_meta("Vehicle").has_field("service_interval_km"):
+		return
+	from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
+
+	create_custom_fields(
+		{
+			"Vehicle": [
+				{
+					"fieldname": "service_interval_km",
+					"label": "Service Interval (km)",
+					"fieldtype": "Int",
+					"default": "10000",
+					"insert_after": "average_yield",
+				},
+				{
+					"fieldname": "service_interval_months",
+					"label": "Service Interval (months)",
+					"fieldtype": "Int",
+					"default": "6",
+					"insert_after": "service_interval_km",
+				},
+				{
+					"fieldname": "last_service_odometer",
+					"label": "Last Service Odometer",
+					"fieldtype": "Float",
+					"precision": "2",
+					"insert_after": "service_interval_months",
+				},
+				{
+					"fieldname": "last_service_date",
+					"label": "Last Service Date",
+					"fieldtype": "Date",
+					"insert_after": "last_service_odometer",
+				},
+			],
+		},
+		ignore_validate=True,
+	)
+	frappe.clear_cache()
 
 
 def import_fallback_doctypes():
@@ -104,6 +185,34 @@ def get_fleet_log_custom_fields():
 				"insert_after": "vehicle_type",
 				"description": "Rolling average, recalculated after every Reconciled trip.",
 			},
+			{
+				"fieldname": "service_interval_km",
+				"label": "Service Interval (km)",
+				"fieldtype": "Int",
+				"default": "10000",
+				"insert_after": "average_yield",
+				"description": "Reminder when the odometer crosses the last service odometer plus this interval.",
+			},
+			{
+				"fieldname": "service_interval_months",
+				"label": "Service Interval (months)",
+				"fieldtype": "Int",
+				"default": "6",
+				"insert_after": "service_interval_km",
+			},
+			{
+				"fieldname": "last_service_odometer",
+				"label": "Last Service Odometer",
+				"fieldtype": "Float",
+				"precision": "2",
+				"insert_after": "service_interval_months",
+			},
+			{
+				"fieldname": "last_service_date",
+				"label": "Last Service Date",
+				"fieldtype": "Date",
+				"insert_after": "last_service_odometer",
+			},
 		],
 		"Driver": [
 			{
@@ -120,6 +229,16 @@ def get_fleet_log_custom_fields():
 				"fieldtype": "Link",
 				"options": "Vehicle",
 				"insert_after": "user",
+			},
+		],
+		"Trip": [
+			{
+				"fieldname": "cost_center",
+				"label": "Cost Center",
+				"fieldtype": "Link",
+				"options": "Cost Center",
+				"insert_after": "company",
+				"description": "Optional cost center for multi-department cost attribution (ERPNext only).",
 			},
 		],
 	}
@@ -158,15 +277,34 @@ def create_workflow():
 	"""Import the Trip workflow fixture (idempotent).
 
 	The fixture lives under the module's `workflow/` folder, which is not part
-	of the standard doctype sync path, so it is imported explicitly. Workflow
-	State and Workflow Action Master records are created automatically by the
-	Workflow document's on_update during the import.
+	of the standard doctype sync path, so it is imported explicitly. If the
+	fixture changes (e.g. a new state was added), an existing workflow is
+	updated in place so existing sites pick up the new fixture.
 	"""
-	if frappe.db.exists("Workflow", "Trip Workflow"):
-		return
 	path = frappe.get_app_path(
 		"fleet_log", "fleet_log", "workflow", "trip_workflow", "trip_workflow.json"
 	)
+	with open(path, encoding="utf-8") as f:
+		fixture = json.load(f)
+
+	if frappe.db.exists("Workflow", "Trip Workflow"):
+		doc = frappe.get_doc("Workflow", "Trip Workflow")
+		states = {s.state for s in doc.states}
+		if "Cancelled" not in states or not doc.send_email_alert:
+			# apply the latest fixture onto the existing workflow. Child tables
+			# are cleared and re-appended so no duplicate states/transitions.
+			doc.send_email_alert = fixture["send_email_alert"]
+			doc.workflow_state_field = fixture["workflow_state_field"]
+			doc.states = []
+			for state in fixture["states"]:
+				doc.append("states", state)
+			doc.transitions = []
+			for transition in fixture["transitions"]:
+				doc.append("transitions", transition)
+			doc.save(ignore_permissions=True)
+			frappe.clear_cache()
+		return
+
 	import_file_by_path(path)
 	frappe.clear_cache()
 
@@ -187,6 +325,97 @@ def create_dashboard_chart():
 		"fleet_log", "fleet_log", "dashboard_chart", "fuel_yield_trend", "fuel_yield_trend.json"
 	)
 	import_file_by_path(path)
+	frappe.clear_cache()
+
+
+# ---------------------------------------------------------------------------
+# Number Cards (KPIs)
+# ---------------------------------------------------------------------------
+NUMBER_CARDS = [
+	{
+		"label": "Fuel Cost This Month",
+		"document_type": "Fuel Log",
+		"function": "Sum",
+		"aggregate_function_based_on": "fuel_cost",
+		"stats_time_interval": "Monthly",
+		"color": "#f39c12",
+		"filters_json": "{}",
+		"type": "Document",
+	},
+	{
+		"label": "Trips Completed",
+		"document_type": "Trip",
+		"function": "Count",
+		"stats_time_interval": "Monthly",
+		"color": "#2490EF",
+		"filters_json": json.dumps({"status": ["in", ["Completed", "Reconciled"]]}),
+		"type": "Document",
+	},
+	{
+		"label": "Flagged Trips",
+		"document_type": "Trip",
+		"function": "Count",
+		"color": "#e74c3c",
+		"filters_json": json.dumps({"yield_flag": ["!=", "Normal"]}),
+		"type": "Document",
+	},
+	{
+		"label": "Fleet Size",
+		"document_type": "Vehicle",
+		"function": "Count",
+		"color": "#27ae60",
+		"filters_json": "{}",
+		"type": "Document",
+	},
+]
+
+
+def create_number_cards():
+	"""Create the KPI Number Cards and attach them to the Fleet Log workspace."""
+	for card in NUMBER_CARDS:
+		if frappe.db.exists("Number Card", card["label"]):
+			continue
+		frappe.get_doc({"doctype": "Number Card", **card}).insert(
+			ignore_permissions=True, ignore_mandatory=True
+		)
+
+	if frappe.db.exists("Workspace", "Fleet Log"):
+		workspace = frappe.get_doc("Workspace", "Fleet Log")
+		existing = {row.number_card_name for row in (workspace.number_cards or [])}
+		for card in NUMBER_CARDS:
+			if card["label"] not in existing:
+				workspace.append("number_cards", {"number_card_name": card["label"]})
+		if workspace.number_cards:
+			workspace.save(ignore_permissions=True)
+	frappe.clear_cache()
+
+
+# ---------------------------------------------------------------------------
+# Print Formats & Web Forms
+# ---------------------------------------------------------------------------
+def create_print_formats():
+	"""Import the app's print formats (idempotent; also auto-synced on migrate)."""
+	for name, folder in (
+		("Trip Print", "trip_print"),
+		("Fuel Log Print", "fuel_log_print"),
+		("Trip Expense Print", "trip_expense_print"),
+	):
+		if frappe.db.exists("Print Format", name):
+			continue
+		path = frappe.get_app_path(
+			"fleet_log", "fleet_log", "print_format", folder, f"{folder}.json"
+		)
+		import_file_by_path(path)
+	frappe.clear_cache()
+
+
+def create_web_forms():
+	"""Import the driver-facing web forms (idempotent; also auto-synced on migrate)."""
+	for name, folder in (("Trip Log", "trip_log"),):
+		if frappe.db.exists("Web Form", name):
+			continue
+		path = frappe.get_app_path("fleet_log", "fleet_log", "web_form", folder, f"{folder}.json")
+		import_file_by_path(path)
 	frappe.clear_cache()
 
 

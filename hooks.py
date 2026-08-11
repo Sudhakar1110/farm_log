@@ -9,7 +9,7 @@ app_description = (
 app_email = "support@example.com"
 app_icon = "octicon octicon-rocket"
 app_license = "MIT"
-app_version = "0.0.1"
+app_version = "0.1.0"
 
 # ---------------------------------------------------------------------------
 # Apps required before installing this app.
@@ -35,12 +35,18 @@ after_install = "fleet_log.install.after_install"
 after_migrate = "fleet_log.install.after_migrate"
 
 # ---------------------------------------------------
-# Scheduled jobs
+# Scheduled jobs (daily)
 # ---------------------------------------------------
-# Daily: notify drivers + fleet managers about Trips stuck "In Progress".
+# - flag_stale_trips: notify about Trips stuck "In Progress" > 24h and Trips
+#   assigned but never started > 24h.
+# - check_vehicle_maintenance: notify Fleet Managers when a vehicle crosses
+#   its service due odometer or due date.
+# - check_license_expiry: notify about driver licenses expired / expiring soon.
 scheduler_events = {
 	"daily": [
 		"fleet_log.utils.flag_stale_trips",
+		"fleet_log.utils.check_vehicle_maintenance",
+		"fleet_log.utils.check_license_expiry",
 	]
 }
 

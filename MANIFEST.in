@@ -1,0 +1,8 @@
+include README.md
+include license.txt
+include modules.txt
+include patches.txt
+include requirements.txt
+recursive-include fleet_log *.json *.py *.js *.css *.md *.html
+recursive-include fallback_doctypes *.json
+recursive-include fleet_log/translations *

@@ -8,29 +8,39 @@
 
 ## Features
 
-- **Trip** doctype with a workflow-driven lifecycle: `Assigned → In Progress → Completed → Reconciled`
+- **Trip** doctype with a workflow-driven lifecycle: `Assigned → In Progress → Completed → Reconciled` (plus `Cancelled`)
   - `distance_covered = end_odometer − start_odometer`
   - `total_fuel_used` = sum of linked Fuel Log quantities
   - `trip_yield` (km/litre) computed on completion, guarded against divide-by-zero
   - `yield_flag`: `Normal` (within 15% of the vehicle average) / `Below Average` (15–30% below) / `Critical` (>30% below)
   - `Vehicle.current_odometer` is auto-updated when a trip completes
+  - `trip_type` (Field Work / Delivery / Personal / Other), optional `company`, and GPS `start_geo` / `end_geo` fields
+  - drivers are notified when a trip is assigned to them, and on every status change
+- **Workflow state machine is enforced on direct saves** (not just the workflow UI):
+  - skipping states (`Assigned → Completed`) or going backwards (`Completed → Assigned`) is rejected
+  - a Driver can only perform `Assigned → In Progress` and `In Progress → Completed`
+  - `Completed → Reconciled` and any `→ Cancelled` require the Fleet Manager
 - **Fuel Log** doctype
   - Standalone fuel logs or logs tied to an open trip
-  - `fill_up_yield` sanity check against the vehicle's last known odometer
+  - `fill_up_yield` uses **distance since the previous fill-up** (not the last completed trip), so mid-trip fill-ups are measured correctly
   - `sanity_flag`: flagged `Suspicious` when a fill-up implies more than 2x or less than 0.3x the vehicle's average yield
-- **Trip Expense** doctype (tolls, parking, other) — on ERPNext sites a **Create Expense Claim** button pushes the expense into ERPNext's `Expense Claim` doctype
-- **Workflow** (`Trip Workflow`) with server-side transition conditions:
-  - `Assigned → In Progress`: requires `start_odometer` and `start_time`
-  - `In Progress → Completed`: requires `end_odometer`, `end_time` and `end_odometer > start_odometer`
-  - `Completed → Reconciled`: Fleet Manager only — recalculates the vehicle's rolling `average_yield` and **locks the trip** against further edits by non-managers
+  - `fuel_type`, `fuel_vendor` (station), and a computed `price_per_litre`
+  - a fill-up's `odometer_at_fill` must fall inside its linked trip's odometer window
+- **Trip Expense** doctype (tolls, parking, other) — on ERPNext sites **Create Expense Claim** / **Create Journal Entry** buttons push the expense into ERPNext
 - **Validation is server-side** (never just client-side)
-  - `end_odometer <= start_odometer` is rejected
+  - `end_odometer <= start_odometer` and `end_time < start_time` are rejected
   - `Fuel Log.odometer_at_fill < vehicle.current_odometer` is rejected (the vehicle cannot go backwards)
   - a new trip whose `start_odometer` does not match the vehicle's `current_odometer` is **warned** (off-system usage), never blocked
-- **Scheduled job** (daily, `hooks.py → scheduler_events`): `flag_stale_trips` sends a Notification Log to the driver and all Fleet Managers for any trip still `In Progress` after 24 hours
-- **Four Query Reports**: Cost per Vehicle, Driver Mileage Report, Fuel Yield Trend, Flagged Trips Report
+  - a trip on a vehicle other than the driver's `assigned_vehicle` is **warned**
+- **Scheduled jobs** (daily, `hooks.py → scheduler_events`):
+  - `flag_stale_trips` — notify for trips stuck `In Progress` > 24 h and trips assigned but never started > 24 h (deduplicated, no daily spam)
+  - `check_vehicle_maintenance` — odometer/date-based service reminders
+  - `check_license_expiry` — driver license expiry alerts (30-day window)
+- **Six Query Reports**: Cost per Vehicle, Driver Mileage Report, Fuel Yield Trend, Flagged Trips Report, Fuel Price Trend, Fuel Cost per Driver
+- **KPI Number Cards** on the Fleet Log workspace (Fuel Cost This Month, Trips Completed, Flagged Trips, Fleet Size)
+- **Print formats** for Trip, Fuel Log and Trip Expense; a **Trip Log web form** for drivers; **REST API endpoints** (`fleet_log.api`) for mobile field capture; **CSV bulk import** helpers (`fleet_log.data_import`)
 - **Roles**: `Fleet Manager` (full access, may reconcile) and `Driver` (own trips / fuel logs only)
-  - `permission_query_conditions` scopes Driver-role users to `driver = <their linked Driver record>`
+  - `permission_query_conditions` scopes Driver-role users to `driver = <their linked Driver record>`; fuel logs are visible to the driver who filled them **or** whose trip they belong to
 
 ---
 
@@ -88,9 +98,10 @@ The `Trip Workflow` uses the `status` field as its workflow state field:
 |------|--------|----|---------------|-----------|
 | Assigned | Begin Trip | In Progress | Driver, Fleet Manager | `start_odometer` and `start_time` set |
 | In Progress | Complete Trip | Completed | Driver, Fleet Manager | `end_odometer` and `end_time` set, `end_odometer > start_odometer` |
-| Completed | Reconcile | Reconciled | Fleet Manager | — |
+| Completed | Reconcile | Reconciled | Fleet Manager | — (locks the trip, rolls yield into the vehicle average) |
+| Assigned / In Progress / Completed | Cancel Trip | Cancelled | Fleet Manager | — |
 
-The workflow conditions are evaluated server-side, and the same rules are mirrored in `Trip.validate` so direct saves are equally safe.
+The workflow conditions are evaluated server-side, and the same rules (including the **source state** and **role** checks) are mirrored in `Trip.validate` so direct saves, scripts and the API are equally safe. Workflow email alerts are enabled — emails are sent when outbound email is configured. Cancelling a Reconciled trip re-rolls the vehicle's average yield.
 
 ---
 
@@ -100,8 +111,16 @@ The workflow conditions are evaluated server-side, and the same rules are mirror
 2. **Driver Mileage Report** — distance driven per driver (with trip counts)
 3. **Fuel Yield Trend** — `trip_yield` over time per vehicle (gradual decline = maintenance signal; sudden drop = theft/leak signal)
 4. **Flagged Trips Report** — trips where `yield_flag != Normal` or any linked Fuel Log is `Suspicious`, for review during reconciliation
+5. **Fuel Price Trend** — `price_per_litre` over time per vehicle / fuel type / vendor
+6. **Fuel Cost per Driver** — total fuel spend, litres and average price per driver
 
 Reports run identically on MariaDB and PostgreSQL (grouping is done in Python where needed).
+
+## API, Web & Bulk Import
+
+- **REST API** (`fleet_log.api`, whitelisted): `get_my_vehicles`, `create_trip`, `update_trip`, `log_fuel`, `get_my_trips`, `get_my_fuel_logs` — all respect the normal permission scoping, so they are safe for mobile/field clients.
+- **Web form**: the published **Trip Log** web form (`/trip-log`) lets logged-in drivers create trips from the portal without desk access.
+- **Bulk import**: `bench --site <site> execute fleet_log.data_import.import_trips_from_csv --kwargs '{"file_path": "/path/trips.csv"}'` (and `import_fuel_logs_from_csv`) with the column headers documented in `fleet_log/data_import.py`.
 
 ---
 
@@ -112,6 +131,10 @@ bench --site <sitename> migrate                # after pulling changes
 bench --site <sitename> run-tests --app fleet_log
 ```
 
+The repo ships a GitHub Actions workflow (`.github/workflows/ci.yml`) that spins up a bench with Frappe v15 and runs the integration tests on every push/PR.
+
+> **Install order still matters.** Install ERPNext *before* fleet_log (or on a site that already has it). If ERPNext is installed later, `after_migrate` logs a clear error pointing to a reinstall so the app can switch to ERPNext mode.
+
 Project layout:
 
 ```
@@ -119,11 +142,17 @@ fleet_log/
 ├── hooks.py                        # scheduler, permissions, doc_events, install hooks
 ├── fleet_log/
 │   ├── install.py                  # mode detection: fallbacks vs ERPNext custom fields
-│   ├── utils.py                    # is_erpnext_installed, yield math, permission hooks
+│   ├── utils.py                    # is_erpnext_installed, yield math, permission hooks, schedulers
+│   ├── api.py                      # whitelisted REST endpoints (mobile field capture)
+│   ├── data_import.py              # CSV bulk import helpers
 │   ├── doctype/{trip, fuel_log, trip_expense, vehicle, driver}/
 │   ├── workflow/trip_workflow/     # Trip workflow fixture
-│   └── reports/                    # the four query reports
+│   ├── reports/                    # the six query reports
+│   ├── print_format/               # Trip / Fuel Log / Trip Expense print formats
+│   ├── web_form/trip_log/          # driver-facing Trip Log web form
+│   └── workspace/fleet_log/        # workspace incl. KPI number cards
 ├── fallback_doctypes/              # Vehicle/Driver fixtures (standalone mode only)
+├── .github/workflows/ci.yml        # bench-based CI
 └── tests/                          # integration tests
 ```
 

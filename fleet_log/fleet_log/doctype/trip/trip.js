@@ -14,10 +14,10 @@ frappe.ui.form.on("Trip", {
 				);
 			}
 		}
-		// Pre-fill start odometer from the vehicle's last known reading
-		// (standalone mode only: drivers cannot read ERPNext's Vehicle master)
-		if (!frappe.boot.erpnext_installed) {
-			frm.add_fetch("vehicle", "current_odometer", "start_odometer");
-		}
+		// Pre-fill start odometer from the vehicle's last known reading.
+		// The Driver role is granted read access to Vehicle in both modes
+		// (fallback doctype or ERPNext custom docperm), so the fetch works
+		// everywhere; it simply no-ops if the user lacks read access.
+		frm.add_fetch("vehicle", "current_odometer", "start_odometer");
 	}
 });

@@ -5,7 +5,7 @@ from frappe.utils import flt
 
 from fleet_log.utils import (
 	get_driver_for_user,
-	get_vehicle_average_yield,
+	get_effective_average_yield,
 	get_vehicle_current_odometer,
 	is_fleet_manager,
 )
@@ -22,6 +22,7 @@ class FuelLog(Document):
 		self.validate_linked_trip()
 		self.validate_odometer()
 		self.compute_fill_up_yield_and_flag()
+		self.compute_price_per_litre()
 
 	def set_filled_by_if_empty(self):
 		"""Driver-role users are scoped to their own records, so a driver
@@ -39,9 +40,9 @@ class FuelLog(Document):
 	def validate_linked_trip(self):
 		if not self.trip:
 			return
-		trip_status, trip_vehicle = frappe.db.get_value(
-			"Trip", self.trip, ["status", "vehicle"]
-		) or (None, None)
+		trip_status, trip_vehicle, trip_start_odometer, trip_end_odometer = frappe.db.get_value(
+			"Trip", self.trip, ["status", "vehicle", "start_odometer", "end_odometer"]
+		) or (None, None, None, None)
 		if trip_status == "Reconciled":
 			frappe.throw(_("Fuel Logs cannot be added to a Reconciled Trip."))
 		if self.vehicle and trip_vehicle and self.vehicle != trip_vehicle:
@@ -51,6 +52,23 @@ class FuelLog(Document):
 					"Set the correct vehicle or remove the Trip link."
 				).format(self.vehicle, self.trip, trip_vehicle)
 			)
+		# A fill-up must fall inside the linked trip's odometer window
+		if self.odometer_at_fill is not None:
+			if trip_start_odometer is not None and flt(self.odometer_at_fill) < flt(trip_start_odometer):
+				frappe.throw(
+					_(
+						"Odometer at fill ({0}) is before the trip's start odometer ({1}). "
+						"Correct the reading or remove the Trip link."
+					).format(flt(self.odometer_at_fill), flt(trip_start_odometer))
+				)
+			if trip_end_odometer is not None and flt(self.odometer_at_fill) > flt(trip_end_odometer):
+				frappe.throw(
+					_(
+						"Odometer at fill ({0}) is after the trip's end odometer ({1}). "
+						"Either remove the Trip link (this fill-up happened after the trip) "
+						"or correct the reading."
+					).format(flt(self.odometer_at_fill), flt(trip_end_odometer))
+				)
 
 	def validate_odometer(self):
 		"""Reject odometer readings that would imply the vehicle went backwards."""
@@ -65,16 +83,39 @@ class FuelLog(Document):
 				).format(flt(self.odometer_at_fill), flt(last_known))
 			)
 
-	def compute_fill_up_yield_and_flag(self):
-		"""Light sanity check against the vehicle's last known odometer and
-		average yield. Flags readings more than 2x / less than 0.3x the average
-		as Suspicious (a warning, not a hard block)."""
-		last_known = get_vehicle_current_odometer(self.vehicle)
-		average_yield = get_vehicle_average_yield(self.vehicle)
+	def get_last_fill_odometer(self):
+		"""Odometer of the most recent earlier fill-up for the same vehicle.
 
-		if last_known and flt(self.fuel_quantity) > 0:
+		Used as the baseline for fill-up yield so a mid-trip fill-up is
+		measured against the previous fill (distance since last fill), not
+		against the odometer at the last completed trip.
+		"""
+		if not self.vehicle or not self.odometer_at_fill:
+			return None
+		filters = {
+			"vehicle": self.vehicle,
+			"odometer_at_fill": ["<", flt(self.odometer_at_fill)],
+		}
+		if self.get("name"):
+			filters["name"] = ["!=", self.name]
+		return frappe.db.get_value(
+			"Fuel Log", filters, "odometer_at_fill", order_by="odometer_at_fill desc"
+		)
+
+	def compute_fill_up_yield_and_flag(self):
+		"""Sanity check the fill-up against the distance since the last fill and
+		the vehicle's average yield. Flags readings more than 2x / less than
+		0.3x the average as Suspicious (a warning, not a hard block)."""
+		baseline = self.get_last_fill_odometer() or get_vehicle_current_odometer(self.vehicle)
+		average_yield = get_effective_average_yield(self.vehicle)
+
+		if (
+			baseline
+			and flt(self.odometer_at_fill) > flt(baseline)
+			and flt(self.fuel_quantity) > 0
+		):
 			self.fill_up_yield = flt(
-				(flt(self.odometer_at_fill) - flt(last_known)) / flt(self.fuel_quantity), 2
+				(flt(self.odometer_at_fill) - flt(baseline)) / flt(self.fuel_quantity), 2
 			)
 		else:
 			self.fill_up_yield = 0
@@ -89,3 +130,10 @@ class FuelLog(Document):
 			)
 		):
 			self.sanity_flag = "Suspicious"
+
+	def compute_price_per_litre(self):
+		"""Derived fuel price per litre (fuel_cost / fuel_quantity)."""
+		if flt(self.fuel_quantity) > 0:
+			self.price_per_litre = flt(flt(self.fuel_cost) / flt(self.fuel_quantity), 4)
+		else:
+			self.price_per_litre = 0

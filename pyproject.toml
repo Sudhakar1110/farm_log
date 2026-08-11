@@ -1,6 +1,6 @@
 [project]
 name = "fleet_log"
-version = "0.0.1"
+version = "0.1.0"
 description = "Vehicle trips, odometer readings, fuel logging and fuel yield (mileage) tracking for Frappe v15. Runs standalone on Frappe and auto-detects ERPNext v15 for deep integration."
 readme = "README.md"
 requires-python = ">=3.10"
