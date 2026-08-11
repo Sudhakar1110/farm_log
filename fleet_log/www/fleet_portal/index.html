@@ -872,7 +872,7 @@ table.data tbody tr:hover { background: #FAFAFB; }
 			root.innerHTML = "";
 			if (escHandler) { document.removeEventListener("keydown", escHandler); escHandler = null; }
 		};
-		$("[data-close]", root).forEach((b) => b.addEventListener("click", close));
+		$$("[data-close]", root).forEach((b) => b.addEventListener("click", close));
 		backdrop.addEventListener("click", (e) => { if (e.target === backdrop) close(); });
 		escHandler = (e) => { if (e.key === "Escape") close(); };
 		document.addEventListener("keydown", escHandler);
@@ -989,7 +989,7 @@ table.data tbody tr:hover { background: #FAFAFB; }
 	function navigate(view) {
 		if (!VIEWS[view]) view = "dashboard";
 		state.view = view;
-		$(".nav-item").forEach((a) => a.classList.toggle("active", a.dataset.view === view));
+		$$(".nav-item").forEach((a) => a.classList.toggle("active", a.dataset.view === view));
 		$("#view-title").textContent = VIEWS[view].title;
 		$("#view-sub").textContent = VIEWS[view].sub;
 		closeSidebar();
@@ -1176,15 +1176,15 @@ table.data tbody tr:hover { background: #FAFAFB; }
 			${rows.length ? `<div class="trip-list">${rows.map(tripRow).join("")}</div>` : emptyState("route", "No trips here", "No trips match this filter yet. Create a new trip to get started.", '<button class="btn btn-primary" data-action="new-trip"><i data-lucide="plus" width="16" height="16"></i> New Trip</button>')}
 		`;
 		bindCommonActions(el);
-		$(".filter-chip", el).forEach((c) =>
+		$$(".filter-chip", el).forEach((c) =>
 			c.addEventListener("click", () => { state.tripFilter = c.dataset.filter; renderTrips(el); })
 		);
-		$("[data-act]", el).forEach((b) => b.addEventListener("click", (e) => {
+		$$("[data-act]", el).forEach((b) => b.addEventListener("click", (e) => {
 			e.stopPropagation();
 			const trip = state.trips.find((t) => t.name === b.dataset.trip);
 			if (trip) handleTripAction(b.dataset.act, trip);
 		}));
-		$(".trip-item", el).forEach((item) =>
+		$$(".trip-item", el).forEach((item) =>
 			item.addEventListener("click", (e) => {
 				if (e.target.closest("button") || e.target.closest("[data-stop]")) return;
 				item.classList.toggle("open");
@@ -1361,10 +1361,10 @@ table.data tbody tr:hover { background: #FAFAFB; }
 
 	// ============================================================== FORMS
 	function bindCommonActions(root) {
-		$("[data-action='new-trip']", root).forEach((b) => b.addEventListener("click", () => newTripModal()));
-		$("[data-action='log-fuel']", root).forEach((b) => b.addEventListener("click", () => logFuelModal()));
-		$("[data-action='new-expense']", root).forEach((b) => b.addEventListener("click", () => expenseModal()));
-		$("[data-action='go-trips']", root).forEach((b) => b.addEventListener("click", () => navigate("trips")));
+		$$("[data-action='new-trip']", root).forEach((b) => b.addEventListener("click", () => newTripModal()));
+		$$("[data-action='log-fuel']", root).forEach((b) => b.addEventListener("click", () => logFuelModal()));
+		$$("[data-action='new-expense']", root).forEach((b) => b.addEventListener("click", () => expenseModal()));
+		$$("[data-action='go-trips']", root).forEach((b) => b.addEventListener("click", () => navigate("trips")));
 	}
 
 	async function newTripModal() {
@@ -1614,7 +1614,7 @@ table.data tbody tr:hover { background: #FAFAFB; }
 		$("#btn-new-trip").addEventListener("click", () => newTripModal());
 		$("#btn-log-fuel").addEventListener("click", () => logFuelModal());
 
-		$(".nav-item").forEach((a) => a.addEventListener("click", (e) => {
+		$$(".nav-item").forEach((a) => a.addEventListener("click", (e) => {
 			e.preventDefault();
 			navigate(a.dataset.view);
 		}));
