@@ -393,7 +393,7 @@ NUMBER_CARDS = [
 		"stats_time_interval": "Monthly",
 		"color": "#f39c12",
 		"filters_json": "{}",
-		"type": "Document",
+		"type": "Document Type",
 	},
 	{
 		"label": "Trips Completed",
@@ -402,7 +402,7 @@ NUMBER_CARDS = [
 		"stats_time_interval": "Monthly",
 		"color": "#2490EF",
 		"filters_json": json.dumps({"status": ["in", ["Completed", "Reconciled"]]}),
-		"type": "Document",
+		"type": "Document Type",
 	},
 	{
 		"label": "Flagged Trips",
@@ -410,7 +410,7 @@ NUMBER_CARDS = [
 		"function": "Count",
 		"color": "#e74c3c",
 		"filters_json": json.dumps({"yield_flag": ["!=", "Normal"]}),
-		"type": "Document",
+		"type": "Document Type",
 	},
 	{
 		"label": "Fleet Size",
@@ -418,7 +418,7 @@ NUMBER_CARDS = [
 		"function": "Count",
 		"color": "#27ae60",
 		"filters_json": "{}",
-		"type": "Document",
+		"type": "Document Type",
 	},
 ]
 
