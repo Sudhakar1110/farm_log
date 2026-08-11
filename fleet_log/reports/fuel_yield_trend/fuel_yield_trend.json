@@ -7,6 +7,13 @@
  "doctype": "Report",
  "filters": [
   {
+   "fieldname": "vehicle",
+   "fieldtype": "Link",
+   "label": "Vehicle",
+   "mandatory": 1,
+   "options": "Vehicle"
+  },
+  {
    "default": "Month Start",
    "fieldname": "from_date",
    "fieldtype": "Date",
@@ -19,12 +26,6 @@
    "fieldtype": "Date",
    "label": "To Date",
    "mandatory": 1
-  },
-  {
-   "fieldname": "vehicle",
-   "fieldtype": "Link",
-   "label": "Vehicle",
-   "options": "Vehicle"
   }
  ],
  "idx": 0,
@@ -33,10 +34,10 @@
  "modified": "2024-01-01 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "Fleet Log",
- "name": "Flagged Trips Report",
+ "name": "Fuel Yield Trend",
  "owner": "Administrator",
  "query": "",
- "query_method": "fleet_log.fleet_log.reports.flagged_trips_report.flagged_trips_report.execute",
+ "query_method": "fleet_log.reports.fuel_yield_trend.fuel_yield_trend.execute",
  "ref_doctype": "Trip",
  "report_type": "Query Report",
  "roles": [

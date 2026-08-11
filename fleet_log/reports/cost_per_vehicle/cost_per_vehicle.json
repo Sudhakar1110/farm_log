@@ -21,10 +21,10 @@
    "mandatory": 1
   },
   {
-   "fieldname": "driver",
+   "fieldname": "vehicle",
    "fieldtype": "Link",
-   "label": "Driver",
-   "options": "Driver"
+   "label": "Vehicle",
+   "options": "Vehicle"
   }
  ],
  "idx": 0,
@@ -33,11 +33,11 @@
  "modified": "2024-01-01 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "Fleet Log",
- "name": "Fuel Cost per Driver",
+ "name": "Cost per Vehicle",
  "owner": "Administrator",
  "query": "",
- "query_method": "fleet_log.fleet_log.reports.fuel_cost_per_driver.fuel_cost_per_driver.execute",
- "ref_doctype": "Fuel Log",
+ "query_method": "fleet_log.reports.cost_per_vehicle.cost_per_vehicle.execute",
+ "ref_doctype": "Trip",
  "report_type": "Query Report",
  "roles": [
   {

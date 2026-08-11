@@ -67,7 +67,7 @@ When **ERPNext is not installed**, the app creates its own fallback masters:
 - **Vehicle**: `registration_number` (required, unique), `vehicle_type`, `fuel_type`, `current_odometer` (read-only, auto-updated), `average_yield` (read-only, rolling average)
 - **Driver**: `driver_name` (required), `user` (links to a system User for permission scoping), `license_number`, `license_expiry`, `contact_number`, `assigned_vehicle`
 
-The fallback doctypes live in `fallback_doctypes/` (outside the standard doctype-sync path) and are created by `install.py` only when ERPNext is absent — so they never conflict with ERPNext's own doctypes.
+The fallback doctypes live in `fleet_log/fallback_doctypes/` (outside the standard doctype-sync path, which only scans `doctype/`) and are created by `install.py` only when ERPNext is absent — so they never conflict with ERPNext's own doctypes.
 
 ---
 
@@ -146,25 +146,29 @@ The repo ships a GitHub Actions workflow (`.github/workflows/ci.yml`) that spins
 
 > **Install order still matters.** Install ERPNext *before* fleet_log (or on a site that already has it). If ERPNext is installed later, `after_migrate` logs a clear error pointing to a reinstall so the app can switch to ERPNext mode.
 
-Project layout:
+Project layout (standard bench app layout — `fleet_log/` is the importable package):
 
 ```
 fleet_log/
 ├── hooks.py                        # scheduler, permissions, doc_events, install hooks
-├── fleet_log/
-│   ├── install.py                  # mode detection: fallbacks vs ERPNext custom fields
-│   ├── utils.py                    # is_erpnext_installed, yield math, permission hooks, schedulers
-│   ├── api.py                      # whitelisted REST endpoints (mobile field capture)
-│   ├── data_import.py              # CSV bulk import helpers
-│   ├── doctype/{trip, fuel_log, trip_expense, vehicle, driver}/
-│   ├── workflow/trip_workflow/     # Trip workflow fixture
-│   ├── reports/                    # the six query reports
-│   ├── print_format/               # Trip / Fuel Log / Trip Expense print formats
-│   ├── web_form/trip_log/          # driver-facing Trip Log web form
-│   └── workspace/fleet_log/        # workspace incl. KPI number cards
+├── install.py                      # mode detection: fallbacks vs ERPNext custom fields
+├── utils.py                        # is_erpnext_installed, yield math, permission hooks, schedulers
+├── api.py                          # whitelisted REST endpoints (mobile field capture)
+├── data_import.py                  # CSV bulk import helpers
+├── config/desktop.py               # desk module icon/label
+├── doctype/{trip, fuel_log, trip_expense, vehicle, driver}/
+├── workflow/trip_workflow/         # Trip workflow fixture
+├── reports/                        # the six query reports
+├── print_format/                   # Trip / Fuel Log / Trip Expense print formats
+├── web_form/trip_log/              # driver-facing Trip Log web form
+├── workspace/fleet_log/            # workspace incl. KPI number cards
+├── dashboard_chart/                # Fuel Yield Trend chart
 ├── fallback_doctypes/              # Vehicle/Driver fixtures (standalone mode only)
-├── .github/workflows/ci.yml        # bench-based CI
-└── tests/                          # integration tests
+├── tests/                          # integration tests
+├── translations/                   # app translations (empty)
+├── modules.txt / patches.txt       # module list / DB patches
+├── MANIFEST.in / pyproject.toml / requirements.txt / README.md / license.txt
+└── .github/workflows/ci.yml        # bench-based CI
 ```
 
 ## License

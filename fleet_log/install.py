@@ -282,7 +282,7 @@ def create_workflow():
 	updated in place so existing sites pick up the new fixture.
 	"""
 	path = frappe.get_app_path(
-		"fleet_log", "fleet_log", "workflow", "trip_workflow", "trip_workflow.json"
+		"fleet_log", "workflow", "trip_workflow", "trip_workflow.json"
 	)
 	with open(path, encoding="utf-8") as f:
 		fixture = json.load(f)
@@ -322,7 +322,7 @@ def create_dashboard_chart():
 	if frappe.db.exists("Dashboard Chart", "Fuel Yield Trend"):
 		return
 	path = frappe.get_app_path(
-		"fleet_log", "fleet_log", "dashboard_chart", "fuel_yield_trend", "fuel_yield_trend.json"
+		"fleet_log", "dashboard_chart", "fuel_yield_trend", "fuel_yield_trend.json"
 	)
 	import_file_by_path(path)
 	frappe.clear_cache()
@@ -403,7 +403,7 @@ def create_print_formats():
 		if frappe.db.exists("Print Format", name):
 			continue
 		path = frappe.get_app_path(
-			"fleet_log", "fleet_log", "print_format", folder, f"{folder}.json"
+			"fleet_log", "print_format", folder, f"{folder}.json"
 		)
 		import_file_by_path(path)
 	frappe.clear_cache()
@@ -414,7 +414,7 @@ def create_web_forms():
 	for name, folder in (("Trip Log", "trip_log"),):
 		if frappe.db.exists("Web Form", name):
 			continue
-		path = frappe.get_app_path("fleet_log", "fleet_log", "web_form", folder, f"{folder}.json")
+		path = frappe.get_app_path("fleet_log", "web_form", folder, f"{folder}.json")
 		import_file_by_path(path)
 	frappe.clear_cache()
 
@@ -432,7 +432,7 @@ def create_workspace():
 	if frappe.db.exists("Workspace", "Fleet Log"):
 		return
 	path = frappe.get_app_path(
-		"fleet_log", "fleet_log", "workspace", "fleet_log", "fleet_log.json"
+		"fleet_log", "workspace", "fleet_log", "fleet_log.json"
 	)
 	import_file_by_path(path)
 	frappe.clear_cache()
