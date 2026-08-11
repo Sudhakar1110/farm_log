@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Fleet Portal · Bizaxl</title>
+	<meta name="description" content="Fleet trip, fuel and vehicle portal for Bizaxl.">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+	<!-- ============================== LOGIN ============================== -->
+	<div id="login-view" class="login-view hidden">
+		<div class="login-brand">
+			<div class="brand-mark"><i data-lucide="truck" width="18" height="18"></i></div>
+			<span class="brand-name">Bizaxl <b>Fleet</b></span>
+		</div>
+
+		<div class="login-grid">
+			<div class="login-hero">
+				<span class="badge badge-mint"><i data-lucide="sparkles" width="12" height="12"></i> Bizaxl Fleet Portal</span>
+				<h1 class="hero-title">Your fleet,<br>under control.</h1>
+				<p class="hero-sub">Trips, fuel logs, vehicles and expenses — captured in the field, reconciled in the office. Built on the Bizaxl design system.</p>
+				<div class="gradient-divider"></div>
+				<ul class="feature-list">
+					<li><i data-lucide="check" width="16" height="16"></i> Workflow-driven trip lifecycle</li>
+					<li><i data-lucide="check" width="16" height="16"></i> Fuel yield &amp; suspicious-fill flags</li>
+					<li><i data-lucide="check" width="16" height="16"></i> Role-scoped access for drivers &amp; managers</li>
+				</ul>
+			</div>
+
+			<div class="login-card card">
+				<h2 class="card-title">Sign in to the portal</h2>
+				<p class="card-sub">Use your Frappe / Bizaxl account credentials.</p>
+				<form id="login-form" novalidate>
+					<label class="field">
+						<span class="field-label">Email / User ID</span>
+						<input type="text" id="login-usr" class="input" placeholder="you@bizaxl.com" autocomplete="username" required>
+					</label>
+					<label class="field">
+						<span class="field-label">Password</span>
+						<input type="password" id="login-pwd" class="input" placeholder="••••••••" autocomplete="current-password" required>
+					</label>
+					<div id="login-error" class="form-error hidden"></div>
+					<button type="submit" id="login-btn" class="btn btn-primary btn-block">
+						<span class="btn-label">Sign in</span>
+						<span class="btn-spinner hidden"></span>
+					</button>
+				</form>
+				<div class="login-foot">Forgot password? Ask your <b>Fleet Manager</b>.</div>
+			</div>
+		</div>
+
+		<div class="login-foot-brand">Bizaxl Design System · #14F1B1 → #114EFF → #091526</div>
+	</div>
+
+	<!-- ============================== APP SHELL ============================== -->
+	<div id="app" class="app hidden">
+
+		<aside class="sidebar" id="sidebar">
+			<div class="sidebar-brand">
+				<div class="brand-mark"><i data-lucide="truck" width="18" height="18"></i></div>
+				<div>
+					<div class="brand-name">Bizaxl <b>Fleet</b></div>
+					<div class="brand-sub">Trip &amp; fuel log</div>
+				</div>
+			</div>
+
+			<nav class="sidebar-nav">
+				<a class="nav-item active" data-view="dashboard" href="#dashboard"><i data-lucide="layout-dashboard" width="20" height="20"></i><span>Dashboard</span></a>
+				<a class="nav-item" data-view="trips" href="#trips"><i data-lucide="route" width="20" height="20"></i><span>Trips</span></a>
+				<a class="nav-item" data-view="fuel" href="#fuel"><i data-lucide="fuel" width="20" height="20"></i><span>Fuel Logs</span></a>
+				<a class="nav-item" data-view="vehicles" href="#vehicles"><i data-lucide="truck" width="20" height="20"></i><span>Vehicles</span></a>
+				<a class="nav-item" data-view="expenses" href="#expenses"><i data-lucide="receipt" width="20" height="20"></i><span>Expenses</span></a>
+				<a class="nav-item" data-view="account" href="#account"><i data-lucide="user" width="20" height="20"></i><span>Account</span></a>
+			</nav>
+
+			<div class="sidebar-footer">
+				<div class="user-chip" id="side-user-chip"></div>
+				<button class="btn btn-tertiary btn-sm btn-block" id="logout-btn">
+					<i data-lucide="log-out" width="16" height="16"></i> Sign out
+				</button>
+			</div>
+		</aside>
+		<div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+		<main class="main">
+			<header class="topbar">
+				<div class="topbar-left">
+					<button class="btn-icon menu-toggle" id="menu-toggle" aria-label="Open menu"><i data-lucide="menu" width="20" height="20"></i></button>
+					<div>
+						<h1 class="topbar-title" id="view-title">Dashboard</h1>
+						<p class="topbar-sub" id="view-sub"></p>
+					</div>
+				</div>
+				<div class="topbar-right">
+					<button class="btn btn-primary btn-sm" id="btn-new-trip"><i data-lucide="plus" width="16" height="16"></i> New Trip</button>
+					<button class="btn btn-secondary btn-sm" id="btn-log-fuel"><i data-lucide="fuel" width="16" height="16"></i> Log Fuel</button>
+					<div class="user-chip" id="top-user-chip"></div>
+				</div>
+			</header>
+
+			<section id="view" class="view"></section>
+		</main>
+	</div>
+
+	<!-- ============================== OVERLAYS ============================== -->
+	<div id="modal-root"></div>
+	<div id="toast-root" class="toast-root" aria-live="polite"></div>
+
+	<script>
+		window.FP = {
+			user: {{ user | tojson }},
+			csrf: {{ csrf_token | tojson }},
+			full_name: {{ full_name | tojson }}
+		};
+	</script>
+	<script src="https://unpkg.com/lucide@latest"></script>
+	<script src="index.js"></script>
+</body>
+</html>

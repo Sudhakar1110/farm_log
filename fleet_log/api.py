@@ -20,14 +20,21 @@ def get_my_vehicles():
 	"""Vehicles the current user can read (used to populate pickers)."""
 	fields = ["name"]
 	meta = frappe.get_meta("Vehicle")
-	if meta.has_field("registration_number"):
-		fields.append("registration_number")
-	if meta.has_field("license_plate"):
-		fields.append("license_plate")
-	if meta.has_field("current_odometer"):
-		fields.append("current_odometer")
-	if meta.has_field("last_odometer"):
-		fields.append("last_odometer")
+	for f in (
+		"registration_number",
+		"license_plate",
+		"vehicle_type",
+		"fuel_type",
+		"current_odometer",
+		"last_odometer",
+		"average_yield",
+		"service_interval_km",
+		"service_interval_months",
+		"last_service_odometer",
+		"last_service_date",
+	):
+		if meta.has_field(f):
+			fields.append(f)
 	return frappe.db.get_all("Vehicle", fields=fields, order_by="name")
 
 
@@ -164,7 +171,88 @@ def get_my_fuel_logs(limit=50):
 			"fill_up_yield",
 			"sanity_flag",
 			"price_per_litre",
+			"creation",
 		],
 		order_by="creation desc",
 		limit_page_length=cint(limit) or 50,
 	)
+
+
+@frappe.whitelist()
+def get_my_expenses(limit=50):
+	"""Trip Expenses visible to the current user (scoped for Driver-role users)."""
+	return frappe.db.get_all(
+		"Trip Expense",
+		fields=["name", "trip", "expense_type", "amount", "creation"],
+		order_by="creation desc",
+		limit_page_length=cint(limit) or 50,
+	)
+
+
+@frappe.whitelist()
+def create_expense(trip, expense_type="Other", amount=0):
+	"""Create a Trip Expense linked to a trip (permission-checked)."""
+	if not trip:
+		frappe.throw(_("trip is required"))
+	if flt(amount) <= 0:
+		frappe.throw(_("amount must be greater than zero"))
+	doc = frappe.get_doc(
+		{
+			"doctype": "Trip Expense",
+			"trip": trip,
+			"expense_type": expense_type or "Other",
+			"amount": flt(amount),
+		}
+	).insert()
+	return {"name": doc.name, "amount": doc.amount}
+
+
+@frappe.whitelist()
+def get_drivers():
+	"""Drivers for the portal's trip-assignment picker.
+
+	Fleet Managers see all drivers; Driver-role users only ever get their own
+	record (mirrors the permission scoping)."""
+	from fleet_log.utils import get_driver_for_user, is_fleet_manager
+
+	if not is_fleet_manager():
+		own = get_driver_for_user()
+		return [{"name": own}] if own else []
+
+	meta = frappe.get_meta("Driver")
+	fields = ["name"]
+	for f in ("driver_name", "full_name"):
+		if meta.has_field(f):
+			fields.append(f)
+	return frappe.db.get_all("Driver", fields=fields, order_by="name")
+
+
+@frappe.whitelist()
+def get_portal_bootstrap():
+	"""User, role and linked-Driver context for the web portal (safe subset)."""
+	from fleet_log.utils import get_driver_for_user, is_fleet_manager
+
+	user = frappe.session.user
+	driver_info = None
+	driver_name = get_driver_for_user(user)
+	if driver_name:
+		meta = frappe.get_meta("Driver")
+		fields = ["name"]
+		for f in (
+			"driver_name",
+			"full_name",
+			"license_number",
+			"license_expiry",
+			"expiry_date",
+			"contact_number",
+			"assigned_vehicle",
+		):
+			if meta.has_field(f):
+				fields.append(f)
+		driver_info = frappe.db.get_value("Driver", driver_name, fields, as_dict=True)
+	return {
+		"user": user,
+		"full_name": frappe.utils.get_fullname(user),
+		"is_fleet_manager": is_fleet_manager(user),
+		"driver": driver_info,
+	}

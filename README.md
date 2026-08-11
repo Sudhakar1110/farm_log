@@ -39,6 +39,7 @@
 - **Six Query Reports**: Cost per Vehicle, Driver Mileage Report, Fuel Yield Trend, Flagged Trips Report, Fuel Price Trend, Fuel Cost per Driver
 - **KPI Number Cards** on the Fleet Log workspace (Fuel Cost This Month, Trips Completed, Flagged Trips, Fleet Size)
 - **Print formats** for Trip, Fuel Log and Trip Expense; a **Trip Log web form** for drivers; **REST API endpoints** (`fleet_log.api`) for mobile field capture; **CSV bulk import** helpers (`fleet_log.data_import`)
+- **Branded web portal** at `/fleet_portal` — a role-aware dashboard (trips, fuel logs, vehicles, expenses, account) built on the **Bizaxl design system** (DM Sans, navy/mint/blue palette, Lucide icons, glassmorphism). Drivers get a scoped field portal; Fleet Managers get the full reconcile workflow. Uses the same whitelisted API, so every action is permission-checked server-side
 - **Roles**: `Fleet Manager` (full access, may reconcile) and `Driver` (own trips / fuel logs only)
   - `permission_query_conditions` scopes Driver-role users to `driver = <their linked Driver record>`; fuel logs are visible to the driver who filled them **or** whose trip they belong to
 
@@ -129,7 +130,8 @@ Reports run identically on MariaDB and PostgreSQL (grouping is done in Python wh
 
 ## API, Web & Bulk Import
 
-- **REST API** (`fleet_log.api`, whitelisted): `get_my_vehicles`, `create_trip`, `update_trip`, `log_fuel`, `get_my_trips`, `get_my_fuel_logs` — all respect the normal permission scoping, so they are safe for mobile/field clients.
+- **REST API** (`fleet_log.api`, whitelisted): `get_my_vehicles`, `create_trip`, `update_trip`, `log_fuel`, `get_my_trips`, `get_my_fuel_logs`, `get_my_expenses`, `create_expense`, `get_portal_bootstrap`, `get_drivers` — all respect the normal permission scoping, so they are safe for mobile/field clients.
+- **Web portal**: `/fleet_portal` renders its own login screen and a role-aware app shell (Dashboard, Trips, Fuel Logs, Vehicles, Expenses, Account) styled with the Bizaxl design system (`fleet_log/www/fleet_portal/`).
 - **Web form**: the published **Trip Log** web form (`/trip-log`) lets logged-in drivers create trips from the portal without desk access.
 - **Bulk import**: `bench --site <site> execute fleet_log.data_import.import_trips_from_csv --kwargs '{"file_path": "/path/trips.csv"}'` (and `import_fuel_logs_from_csv`) with the column headers documented in `fleet_log/data_import.py`.
 
@@ -164,6 +166,7 @@ fleet_log/
 ├── api.py                          # whitelisted REST endpoints (mobile field capture)
 ├── data_import.py                  # CSV bulk import helpers
 ├── config/desktop.py               # desk module icon/label
+├── www/fleet_portal/               # branded web portal (Bizaxl design system)
 ├── fleet_log/                      # module "Fleet Log" (doctypes + fixtures)
 │   ├── doctype/{trip, fuel_log, trip_expense, vehicle, driver}/
 │   ├── workflow/trip_workflow/     # Trip workflow fixture
