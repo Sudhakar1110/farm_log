@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Fleet Portal · Bizaxl</title>
-	<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2314F1B1'/%3E%3Cstop offset='1' stop-color='%23114EFF'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='%2305133C'/%3E%3Cpath d='M13.937 19.5A2 2 0 0 0 12.5 18.063l-6.135-1.582a.5.5 0 0 1 0-.962L12.5 13.936A2 2 0 0 0 13.937 12.5l1.582-6.135a.5.5 0 0 1 .963 0L18.063 12.5A2 2 0 0 0 19.5 13.937l6.135 1.581a.5.5 0 0 1 0 .964L19.5 18.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z' fill='url(%23g)'/%3E%3C/svg%3E">
+	<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Cdefs%3E%3ClinearGradient%20id='bg'%20x1='0'%20y1='0'%20x2='0'%20y2='1'%3E%3Cstop%20offset='0'%20stop-color='%23114EFF'/%3E%3Cstop%20offset='.55'%20stop-color='%232E6BFF'/%3E%3Cstop%20offset='1'%20stop-color='%2300C950'/%3E%3C/linearGradient%3E%3ClinearGradient%20id='bar'%20x1='0'%20y1='0'%20x2='1'%20y2='0'%3E%3Cstop%20offset='0'%20stop-color='%23FFFFFF'/%3E%3Cstop%20offset='.55'%20stop-color='%2338BDF8'/%3E%3Cstop%20offset='1'%20stop-color='%2314F1B1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='url(%23bg)'/%3E%3Ctext%20x='8'%20y='47'%20font-family='Arial,sans-serif'%20font-weight='700'%20font-size='38'%20fill='%23FFFFFF'%3Eba%3C/text%3E%3Crect%20x='6'%20y='13'%20width='23'%20height='5.5'%20rx='2.75'%20fill='url(%23bar)'/%3E%3Cg%20transform='translate(51.5,6)%20scale(0.36)'%3E%3Cpath%20d='M9.937%2015.5A2%202%200%200%200%208.5%2014.063l-6.135-1.582a.5.5%200%200%201%200-.962L8.5%209.936A2%202%200%200%200%209.937%208.5l1.582-6.135a.5.5%200%200%201%20.963%200L14.063%208.5A2%202%200%200%200%2015.5%209.937l6.135%201.581a.5.5%200%200%201%200%20.964L15.5%2014.063a2%202%200%200%200-1.437%201.437l-1.582%206.135a.5.5%200%200%201-.963%200z'%20fill='%23FFFFFF'/%3E%3C/g%3E%3C/svg%3E">
 	<meta name="description" content="Fleet trip, fuel and vehicle portal for Bizaxl.">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -230,29 +230,21 @@ i[data-lucide] { flex-shrink: 0; }
 
 /* ------------------------------ Bizaxl logo ------------------------------ */
 .bx-logo { display: inline-flex; flex-direction: column; align-items: center; gap: var(--sp-2); }
-.bx-word {
-	display: inline-flex; align-items: flex-end;
-	font-weight: 700; line-height: 1; letter-spacing: -.02em;
-	color: var(--white);
-}
-.bx-word > * { margin-right: -.03em; }
-.bx-word > *:last-child { margin-right: 0; }
-.bx-glyph { display: inline-block; line-height: 1; }
-.bx-i { position: relative; display: inline-flex; flex-direction: column; align-items: center; justify-content: flex-end; }
-.bx-spark {
-	position: absolute; top: -.1em; left: 50%; transform: translateX(-50%);
-	width: .38em; height: .38em; color: var(--white); flex-shrink: 0;
-}
-.bx-x {
-	background: linear-gradient(135deg, var(--mint) 0%, var(--blue) 100%);
-	-webkit-background-clip: text; background-clip: text;
-	color: transparent;
-}
 .bx-tagline { font-size: 12px; font-weight: 500; letter-spacing: .04em; color: rgba(255, 255, 255, .82); }
-.bx-logo-lg .bx-word { font-size: 34px; }
 .bx-logo-lg .bx-tagline { font-size: 13px; }
-.bx-logo-sm .bx-word { font-size: 21px; }
-.bx-logo-sm .bx-tagline { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255, 255, 255, .55); }
+.ba-mark {
+	width: 40px; height: auto; border-radius: 10px; display: block; flex-shrink: 0;
+	box-shadow: 0 4px 14px -4px rgba(17, 78, 255, .5);
+}
+.ba-mark-lg {
+	width: 108px; height: auto; border-radius: 16px; display: block;
+	box-shadow: 0 12px 32px -10px rgba(17, 78, 255, .55);
+}
+.sidebar-brand .brand-name { font-size: 17px; font-weight: 700; letter-spacing: -.01em; }
+.sidebar-brand .brand-sub {
+	font-size: 9px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+	color: rgba(255, 255, 255, .5); margin-top: 1px;
+}
 
 .login-grid {
 	display: grid; grid-template-columns: 1.15fr .85fr; gap: var(--sp-7);
@@ -285,7 +277,6 @@ i[data-lucide] { flex-shrink: 0; }
 	padding: var(--sp-5) var(--sp-4);
 }
 .sidebar-brand { display: flex; align-items: center; gap: var(--sp-3); padding: 0 var(--sp-2) var(--sp-5); border-bottom: 1px solid rgba(255, 255, 255, .08); margin-bottom: var(--sp-4); }
-.sidebar-brand.bx-logo { align-items: flex-start; gap: var(--sp-2); }
 .sidebar-nav { display: flex; flex-direction: column; gap: 2px; flex: 1; }
 .nav-item {
 	display: flex; align-items: center; gap: var(--sp-3);
@@ -322,11 +313,10 @@ i[data-lucide] { flex-shrink: 0; }
 }
 .avatar {
 	width: 30px; height: 30px; border-radius: 50%;
-	background: var(--navy-dark); color: var(--mint);
+	background: var(--mint); color: #0B6B4F;
 	display: flex; align-items: center; justify-content: center;
 	font-size: 13px; font-weight: 700;
-	border: 1px solid rgba(20, 241, 177, .45);
-	box-shadow: 0 0 0 1px rgba(255, 255, 255, .05), 0 2px 6px -2px rgba(5, 19, 60, .4);
+	border: 1px solid rgba(11, 107, 79, .25);
 }
 .user-chip .u-name { font-size: 13px; font-weight: 600; line-height: 1.2; }
 .user-chip .u-role { font-size: 11px; color: var(--gray-400); line-height: 1.2; }
@@ -548,18 +538,33 @@ table.data tbody tr:hover { background: #FAFAFB; }
 </head>
 <body>
 
+	<!-- Shared SVG defs for the bizaxl "ba" logo (gradients referenced by url(#..)) -->
+	<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+		<defs>
+			<linearGradient id="baBg" x1="0" y1="0" x2="0" y2="1">
+				<stop offset="0" stop-color="#114EFF"/>
+				<stop offset=".55" stop-color="#2E6BFF"/>
+				<stop offset="1" stop-color="#00C950"/>
+			</linearGradient>
+			<linearGradient id="baBar" x1="0" y1="0" x2="1" y2="0">
+				<stop offset="0" stop-color="#FFFFFF"/>
+				<stop offset=".55" stop-color="#38BDF8"/>
+				<stop offset="1" stop-color="#14F1B1"/>
+			</linearGradient>
+		</defs>
+	</svg>
+
 	<!-- ============================== LOGIN ============================== -->
 	<div id="login-view" class="login-view hidden">
-		<div class="login-brand bx-logo bx-logo-lg">
-			<span class="bx-word" aria-label="bizaxl">
-				<span class="bx-glyph">b</span>
-				<span class="bx-i">
-					<svg class="bx-spark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
-					<span class="bx-glyph">i</span>
-				</span>
-				<span class="bx-glyph">z</span><span class="bx-glyph">a</span>
-				<span class="bx-glyph bx-x">x</span><span class="bx-glyph">l</span>
-			</span>
+		<div class="login-brand bx-logo">
+			<svg class="ba-mark-lg" viewBox="0 0 120 64" role="img" aria-label="bizaxl">
+				<rect width="120" height="64" rx="14" fill="url(#baBg)"/>
+				<text x="10" y="48" font-family="'DM Sans', Arial, sans-serif" font-weight="700" font-size="42" fill="#FFFFFF">ba</text>
+				<rect x="10" y="14" width="22" height="6" rx="3" fill="url(#baBar)"/>
+				<g transform="translate(57,7) scale(0.42)">
+					<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" fill="#FFFFFF"/>
+				</g>
+			</svg>
 			<span class="bx-tagline">Accelerate Your Growth</span>
 		</div>
 
@@ -605,17 +610,19 @@ table.data tbody tr:hover { background: #FAFAFB; }
 	<div id="app" class="app hidden">
 
 		<aside class="sidebar" id="sidebar">
-			<div class="sidebar-brand bx-logo bx-logo-sm">
-				<span class="bx-word" aria-label="bizaxl">
-					<span class="bx-glyph">b</span>
-					<span class="bx-i">
-						<svg class="bx-spark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
-						<span class="bx-glyph">i</span>
-					</span>
-					<span class="bx-glyph">z</span><span class="bx-glyph">a</span>
-					<span class="bx-glyph bx-x">x</span><span class="bx-glyph">l</span>
-				</span>
-				<span class="bx-tagline">Accelerate Your Growth</span>
+			<div class="sidebar-brand">
+				<svg class="ba-mark" viewBox="0 0 120 64" role="img" aria-label="bizaxl">
+					<rect width="120" height="64" rx="14" fill="url(#baBg)"/>
+					<text x="10" y="48" font-family="'DM Sans', Arial, sans-serif" font-weight="700" font-size="42" fill="#FFFFFF">ba</text>
+					<rect x="10" y="14" width="22" height="6" rx="3" fill="url(#baBar)"/>
+					<g transform="translate(57,7) scale(0.42)">
+						<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" fill="#FFFFFF"/>
+					</g>
+				</svg>
+				<div>
+					<div class="brand-name">bizaxl</div>
+					<div class="brand-sub">Accelerate Your Growth</div>
+				</div>
 			</div>
 
 			<nav class="sidebar-nav">
