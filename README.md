@@ -51,6 +51,17 @@ bench new-app fleet_log            # or copy this app into apps/
 bench --site <sitename> install-app fleet_log
 ```
 
+> **Install note for bench ≥ 5.29 (uv):** bench 5.29+ installs app Python
+> dependencies with `uv`, which refuses Frappe v15's transitive `gunicorn`
+> git-URL dependency. The app already declares that requirement in
+> `pyproject.toml`, so `bench get-app` works out of the box. If you still see
+> `Failed to resolve dependencies for frappe ... gunicorn was included as a URL
+> dependency`, either pull the latest app code, or install with pip instead:
+>
+> ```
+> BENCH_DISABLE_UV=1 bench get-app https://github.com/Sudhakar1110/farm_log.git --skip-assets
+> ```
+
 When **ERPNext is not installed**, the app creates its own fallback masters:
 
 - **Vehicle**: `registration_number` (required, unique), `vehicle_type`, `fuel_type`, `current_odometer` (read-only, auto-updated), `average_yield` (read-only, rolling average)

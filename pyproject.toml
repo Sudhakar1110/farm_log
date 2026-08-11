@@ -10,6 +10,11 @@ authors = [
 ]
 dependencies = [
     "frappe>=15.0.0,<16.0.0",
+    # Frappe v15 declares gunicorn as a git URL dependency. uv (used by
+    # bench >= 5.29) refuses transitive URL dependencies, so it must be
+    # declared here as a direct requirement. Keep the commit in sync with
+    # frappe's version-15 branch.
+    "gunicorn @ git+https://github.com/frappe/gunicorn@bb554053bb87218120d76ab6676af7015680e8b6",
 ]
 
 [tool.bench]
