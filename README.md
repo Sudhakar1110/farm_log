@@ -140,6 +140,7 @@ Reports run identically on MariaDB and PostgreSQL (grouping is done in Python wh
 ```
 bench --site <sitename> migrate                # after pulling changes
 bench --site <sitename> run-tests --app fleet_log
+bench --site <sitename> execute fleet_log.utils.verify_install   # checklist of every doctype/report/workflow the app installs
 ```
 
 The repo ships a GitHub Actions workflow (`.github/workflows/ci.yml`) that spins up a bench with Frappe v15 and runs the integration tests on every push/PR.

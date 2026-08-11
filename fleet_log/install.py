@@ -329,10 +329,19 @@ def create_workflow():
 			for transition in fixture["transitions"]:
 				doc.append("transitions", transition)
 			doc.save(ignore_permissions=True)
-			frappe.clear_cache()
-		return
+	else:
+		import_file_by_path(path)
 
-	import_file_by_path(path)
+	# The doctype form loads one "Workflow State" master record per workflow
+	# state (frappe/desk/form/meta.py -> load_workflows), but importing a
+	# Workflow fixture never creates those masters. Ensure they exist so the
+	# Trip form opens without "Workflow State <x> not found".
+	for state in fixture["states"]:
+		state_name = state["state"]
+		if not frappe.db.exists("Workflow State", state_name):
+			frappe.get_doc(
+				{"doctype": "Workflow State", "workflow_state_name": state_name}
+			).insert(ignore_permissions=True, ignore_mandatory=True)
 	frappe.clear_cache()
 
 

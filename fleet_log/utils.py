@@ -475,3 +475,67 @@ def check_license_expiry():
 def boot_session(bootinfo):
 	"""Expose the ERPNext flag to the client (used to conditionally render UI)."""
 	bootinfo.erpnext_installed = is_erpnext_installed()
+
+
+# ---------------------------------------------------------------------------
+# Install verification
+# ---------------------------------------------------------------------------
+def verify_install():
+	"""Check that everything fleet_log is supposed to install actually exists.
+
+	Run from the bench root:
+
+	    bench --site <sitename> execute fleet_log.utils.verify_install
+
+	Prints one line per expected record (OK / MISSING) and returns a dict with
+	the counts. Read-only (no data is changed).
+	"""
+	expected = [
+		("Role", "Fleet Manager"),
+		("Role", "Driver"),
+		("DocType", "Trip"),
+		("DocType", "Fuel Log"),
+		("DocType", "Trip Expense"),
+		("DocType", "Vehicle"),
+		("DocType", "Driver"),
+		("Workflow", "Trip Workflow"),
+		("Workflow State", "Assigned"),
+		("Workflow State", "In Progress"),
+		("Workflow State", "Completed"),
+		("Workflow State", "Reconciled"),
+		("Workflow State", "Cancelled"),
+		("Dashboard Chart", "Fuel Yield Trend"),
+		("Dashboard", "Fuel Yield Trend"),
+		("Workspace", "Fleet Log"),
+		("Number Card", "Fuel Cost This Month"),
+		("Number Card", "Trips Completed"),
+		("Number Card", "Flagged Trips"),
+		("Number Card", "Fleet Size"),
+		("Report", "Cost per Vehicle"),
+		("Report", "Driver Mileage Report"),
+		("Report", "Flagged Trips Report"),
+		("Report", "Fuel Yield Trend"),
+		("Report", "Fuel Price Trend"),
+		("Report", "Fuel Cost per Driver"),
+		("Print Format", "Trip Print"),
+		("Print Format", "Fuel Log Print"),
+		("Print Format", "Trip Expense Print"),
+		("Web Form", "Trip Log"),
+	]
+
+	missing = []
+	for doctype, name in expected:
+		exists = frappe.db.exists(doctype, name)
+		print(f"{'OK      ' if exists else 'MISSING '} {doctype}: {name}")
+		if not exists:
+			missing.append((doctype, name))
+
+	print("")
+	if missing:
+		print(f"{len(missing)} missing record(s):")
+		for doctype, name in missing:
+			print(f"  - {doctype}: {name}")
+	else:
+		print("All expected fleet_log records are present.")
+
+	return {"checked": len(expected), "missing": len(missing), "missing_records": missing}
