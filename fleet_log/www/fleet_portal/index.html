@@ -4,11 +4,527 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Fleet Portal · Bizaxl</title>
+	<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2314F1B1'/%3E%3Cstop offset='.5' stop-color='%23114EFF'/%3E%3Cstop offset='1' stop-color='%23091526'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Cpath d='M9 21V11l7 5 7-5v10' stroke='%2305133C' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 	<meta name="description" content="Fleet trip, fuel and vehicle portal for Bizaxl.">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="index.css">
+	<style>
+/* ==========================================================================
+   Bizaxl Design System — Fleet Portal
+   Tokens per brand guidelines: navy/mint/blue palette, DM Sans, Lucide icons,
+   4/8/12/16/24/32/48 spacing, 8/10/12/16/999 radius, glass & card shadow.
+   ========================================================================== */
+
+:root {
+	/* Brand palette */
+	--navy-dark: #05133C;
+	--navy-base: #091526;
+	--mint: #14F1B1;
+	--blue: #114EFF;
+	--white: #FFFFFF;
+	--gray-100: #F4F4F5;
+	--gray-200: #E5E7EB;
+	--gray-400: #71717B;
+	--gray-500: #737373;
+	--black: #0A0A0A;
+
+	/* Functional */
+	--green: #00C950;
+	--amber: #F59E0B;
+	--amber-soft: #FFF7E6;
+	--red: #EF4444;
+	--red-soft: #FEF2F2;
+
+	/* Effects */
+	--gradient: linear-gradient(90deg, #14F1B1 0%, #114EFF 50%, #091526 100%);
+	--gradient-soft: linear-gradient(135deg, rgba(20, 241, 177, .14), rgba(17, 78, 255, .10));
+	--shadow-card: 0 1px 3px 0 rgba(0, 0, 0, .10);
+	--shadow-pop: 0 12px 32px -8px rgba(5, 19, 60, .28);
+	--glass-bg: rgba(255, 255, 255, .8);
+	--glass-blur: blur(6px);
+
+	/* Type */
+	--font: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+	/* Radii */
+	--r-sm: 8px;
+	--r-md: 10px;
+	--r-lg: 12px;
+	--r-xl: 16px;
+	--r-pill: 999px;
+
+	/* Spacing scale */
+	--sp-1: 4px;
+	--sp-2: 8px;
+	--sp-3: 12px;
+	--sp-4: 16px;
+	--sp-5: 24px;
+	--sp-6: 32px;
+	--sp-7: 48px;
+
+	/* Layout */
+	--sidebar-w: 252px;
+	--topbar-h: 72px;
+}
+
+/* ----------------------------- Reset / base ----------------------------- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+	font-family: var(--font);
+	font-size: 14px;
+	line-height: 1.5;
+	color: var(--navy-dark);
+	background: var(--gray-100);
+	min-height: 100vh;
+}
+a { color: var(--blue); text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+.hidden { display: none !important; }
+i[data-lucide] { flex-shrink: 0; }
+::selection { background: rgba(20, 241, 177, .35); }
+
+/* ------------------------------- Buttons -------------------------------- */
+.btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--sp-2);
+	padding: 8px 20px;
+	border-radius: var(--r-md);
+	border: 1px solid transparent;
+	font-weight: 700;
+	font-size: 14px;
+	line-height: 1;
+	min-height: 40px;
+	transition: transform .12s ease, box-shadow .12s ease, background .12s ease, border-color .12s ease, opacity .12s ease;
+	white-space: nowrap;
+}
+.btn:active { transform: translateY(1px) scale(.99); }
+.btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+
+.btn-primary { background: var(--mint); color: var(--navy-dark); min-width: 140px; }
+.btn-primary:hover:not(:disabled) { box-shadow: 0 4px 14px -2px rgba(20, 241, 177, .55); transform: translateY(-1px); }
+
+.btn-secondary { background: var(--navy-dark); color: var(--white); min-width: 166px; }
+.btn-secondary:hover:not(:disabled) { background: #0B1F52; box-shadow: var(--shadow-pop); transform: translateY(-1px); }
+
+.btn-tertiary { background: var(--white); color: var(--navy-dark); border: 1px solid rgba(5, 19, 60, .5); min-width: 160px; }
+.btn-tertiary:hover:not(:disabled) { border-color: var(--navy-dark); background: var(--gray-100); }
+
+.btn-ghost { background: transparent; color: var(--gray-400); min-width: 0; padding: 8px 12px; }
+.btn-ghost:hover:not(:disabled) { background: var(--gray-100); color: var(--navy-dark); }
+
+.btn-danger { background: var(--red-soft); color: var(--red); border-color: transparent; min-width: 0; }
+.btn-danger:hover:not(:disabled) { background: var(--red); color: var(--white); }
+
+.btn-sm { min-height: 34px; padding: 6px 14px; font-size: 13px; }
+.btn-block { width: 100%; }
+.btn-icon {
+	display: inline-flex; align-items: center; justify-content: center;
+	width: 40px; height: 40px; border-radius: var(--r-md);
+	border: 1px solid transparent; background: transparent; color: var(--navy-dark);
+	transition: background .12s ease;
+}
+.btn-icon:hover { background: var(--gray-100); }
+
+.btn-spinner {
+	width: 14px; height: 14px; border-radius: 50%;
+	border: 2px solid rgba(5, 19, 60, .25); border-top-color: var(--navy-dark);
+	animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ------------------------------- Badges --------------------------------- */
+.badge {
+	display: inline-flex; align-items: center; gap: 6px;
+	background: var(--gray-100); color: var(--navy-dark);
+	padding: 2px 12px; border-radius: var(--r-pill);
+	font-weight: 500; font-size: 12px; line-height: 20px;
+}
+.badge-mint { background: rgba(20, 241, 177, .18); color: #0B6B4F; }
+.badge-blue { background: rgba(17, 78, 255, .10); color: var(--blue); }
+.badge-green { background: rgba(0, 201, 80, .12); color: #008A38; }
+.badge-amber { background: var(--amber-soft); color: #B45309; }
+.badge-red { background: var(--red-soft); color: var(--red); }
+.badge-navy { background: var(--navy-dark); color: var(--white); }
+
+/* Status chips (workflow states + flags) */
+.chip {
+	display: inline-flex; align-items: center; gap: 6px;
+	padding: 3px 10px; border-radius: var(--r-pill);
+	font-size: 12px; font-weight: 600; line-height: 18px;
+	background: var(--gray-100); color: var(--gray-500);
+}
+.chip .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.chip-assigned { background: rgba(17, 78, 255, .10); color: var(--blue); }
+.chip-progress { background: rgba(20, 241, 177, .20); color: #0B6B4F; }
+.chip-completed { background: rgba(17, 78, 255, .06); color: #1e40af; }
+.chip-reconciled { background: rgba(0, 201, 80, .12); color: #008A38; }
+.chip-cancelled { background: var(--gray-100); color: var(--gray-400); }
+.chip-normal { background: rgba(0, 201, 80, .12); color: #008A38; }
+.chip-below { background: var(--amber-soft); color: #B45309; }
+.chip-critical { background: var(--red-soft); color: var(--red); }
+.chip-suspicious { background: var(--red-soft); color: var(--red); }
+.chip-ok { background: rgba(0, 201, 80, .12); color: #008A38; }
+
+/* -------------------------------- Cards --------------------------------- */
+.card {
+	background: var(--white);
+	border: 1px solid var(--gray-100);
+	border-radius: var(--r-lg);
+	padding: var(--sp-5);
+	box-shadow: var(--shadow-card);
+}
+.card-title { font-size: 18px; font-weight: 700; letter-spacing: -.01em; }
+.card-sub { font-size: 14px; color: var(--gray-400); margin-top: 4px; }
+
+/* -------------------------------- Inputs -------------------------------- */
+.field { display: block; margin-bottom: var(--sp-4); }
+.field-label {
+	display: block; font-size: 13px; font-weight: 600;
+	color: var(--navy-dark); margin-bottom: 6px;
+}
+.input, .select, textarea.input {
+	width: 100%; min-height: 40px;
+	padding: 8px 12px;
+	border: 1px solid var(--gray-200);
+	border-radius: var(--r-sm);
+	font-family: inherit; font-size: 14px; color: var(--navy-dark);
+	background: var(--white);
+	transition: border-color .12s ease, box-shadow .12s ease;
+	appearance: none;
+}
+.select {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2371717B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+	background-repeat: no-repeat; background-position: right 10px center;
+	padding-right: 34px;
+}
+.input:focus, .select:focus, textarea.input:focus {
+	outline: none; border-color: var(--blue);
+	box-shadow: 0 0 0 3px rgba(17, 78, 255, .12);
+}
+.input::placeholder { color: var(--gray-400); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-4); }
+.form-error {
+	background: var(--red-soft); color: var(--red);
+	border-radius: var(--r-sm); padding: 10px 12px;
+	font-size: 13px; font-weight: 500; margin-bottom: var(--sp-4);
+}
+.form-hint { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
+
+/* ------------------------------ Login view ------------------------------ */
+.login-view {
+	min-height: 100vh;
+	background:
+		radial-gradient(900px 420px at 85% -10%, rgba(17, 78, 255, .12), transparent 60%),
+		radial-gradient(700px 400px at -10% 110%, rgba(20, 241, 177, .14), transparent 60%),
+		var(--navy-dark);
+	color: var(--white);
+	display: flex; flex-direction: column;
+	padding: var(--sp-6) var(--sp-5) var(--sp-5);
+}
+.login-brand { display: flex; align-items: center; gap: var(--sp-3); margin-bottom: var(--sp-7); }
+.brand-mark {
+	width: 38px; height: 38px; border-radius: var(--r-md);
+	background: var(--gradient); display: flex; align-items: center; justify-content: center;
+	color: var(--navy-dark); box-shadow: 0 4px 16px -4px rgba(20, 241, 177, .5);
+}
+.brand-name { font-size: 18px; font-weight: 500; letter-spacing: -.01em; }
+.brand-name b { font-weight: 700; color: var(--mint); }
+.brand-sub { font-size: 12px; color: rgba(255, 255, 255, .55); }
+
+.login-grid {
+	display: grid; grid-template-columns: 1.15fr .85fr; gap: var(--sp-7);
+	align-items: center; max-width: 1040px; width: 100%; margin: 0 auto; flex: 1;
+}
+.hero-title { font-size: clamp(34px, 4.5vw, 48px); font-weight: 700; line-height: 1.08; letter-spacing: -.02em; }
+.hero-sub { font-size: 16px; color: rgba(255, 255, 255, .72); max-width: 46ch; margin-top: var(--sp-4); line-height: 1.6; }
+.gradient-divider { height: 3px; width: 96px; border-radius: var(--r-pill); background: var(--gradient); margin: var(--sp-5) 0; }
+.feature-list { list-style: none; display: flex; flex-direction: column; gap: var(--sp-2); }
+.feature-list li {
+	display: flex; align-items: center; gap: var(--sp-2);
+	color: rgba(255, 255, 255, .85); font-size: 16px; line-height: 26px;
+}
+.feature-list i[data-lucide="check"] { color: var(--green); }
+
+.login-card { color: var(--navy-dark); animation: rise .5s ease both; }
+.login-card .card-title { font-size: 22px; }
+.login-foot { font-size: 13px; color: var(--gray-400); margin-top: var(--sp-4); text-align: center; }
+.login-foot-brand { text-align: center; font-size: 12px; color: rgba(255, 255, 255, .35); margin-top: var(--sp-6); }
+
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+/* ------------------------------- App shell ------------------------------ */
+.app { display: flex; min-height: 100vh; }
+.sidebar {
+	width: var(--sidebar-w); flex-shrink: 0;
+	background: var(--navy-dark); color: var(--white);
+	display: flex; flex-direction: column;
+	position: sticky; top: 0; height: 100vh;
+	padding: var(--sp-5) var(--sp-4);
+}
+.sidebar-brand { display: flex; align-items: center; gap: var(--sp-3); padding: 0 var(--sp-2) var(--sp-5); border-bottom: 1px solid rgba(255, 255, 255, .08); margin-bottom: var(--sp-4); }
+.sidebar-brand .brand-sub { color: rgba(255, 255, 255, .45); }
+.sidebar-nav { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.nav-item {
+	display: flex; align-items: center; gap: var(--sp-3);
+	padding: 10px 12px; border-radius: var(--r-md);
+	color: rgba(255, 255, 255, .62); font-size: 14px; font-weight: 500;
+	transition: background .12s ease, color .12s ease;
+}
+.nav-item:hover { background: rgba(255, 255, 255, .06); color: var(--white); }
+.nav-item.active { background: rgba(20, 241, 177, .14); color: var(--mint); font-weight: 600; }
+.nav-item.active i[data-lucide] { color: var(--mint); }
+
+.sidebar-footer { border-top: 1px solid rgba(255, 255, 255, .08); padding-top: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-3); }
+.sidebar-backdrop { display: none; }
+
+.main { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--gray-100); }
+.topbar {
+	position: sticky; top: 0; z-index: 20;
+	display: flex; align-items: center; justify-content: space-between; gap: var(--sp-4);
+	min-height: var(--topbar-h); padding: var(--sp-4) var(--sp-6);
+	background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+	border-bottom: 1px solid var(--gray-100);
+}
+.topbar-left { display: flex; align-items: center; gap: var(--sp-3); min-width: 0; }
+.menu-toggle { display: none; }
+.topbar-title { font-size: 20px; font-weight: 700; letter-spacing: -.01em; }
+.topbar-sub { font-size: 13px; color: var(--gray-400); }
+.topbar-right { display: flex; align-items: center; gap: var(--sp-3); }
+
+.user-chip {
+	display: flex; align-items: center; gap: 10px;
+	padding: 6px 12px 6px 6px; border-radius: var(--r-pill);
+	background: var(--white); border: 1px solid var(--gray-100);
+	box-shadow: var(--shadow-card);
+}
+.avatar {
+	width: 30px; height: 30px; border-radius: 50%;
+	background: var(--gradient); color: var(--navy-dark);
+	display: flex; align-items: center; justify-content: center;
+	font-size: 13px; font-weight: 700;
+}
+.user-chip .u-name { font-size: 13px; font-weight: 600; line-height: 1.2; }
+.user-chip .u-role { font-size: 11px; color: var(--gray-400); line-height: 1.2; }
+.sidebar .user-chip { background: rgba(255, 255, 255, .06); border-color: transparent; box-shadow: none; width: 100%; }
+.sidebar .user-chip .u-name, .sidebar .user-chip .u-role { color: var(--white); }
+.sidebar .user-chip .u-role { color: rgba(255, 255, 255, .5); }
+
+.view { padding: var(--sp-6); max-width: 1200px; width: 100%; margin: 0 auto; }
+
+/* --------------------------- Section scaffolding ------------------------ */
+.section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--sp-4); margin-bottom: var(--sp-5); flex-wrap: wrap; }
+.section-head h2 { font-size: 22px; font-weight: 700; letter-spacing: -.01em; }
+.section-head p { font-size: 14px; color: var(--gray-400); margin-top: 2px; }
+.section-actions { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
+
+/* KPI row */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-4); margin-bottom: var(--sp-6); }
+.kpi {
+	background: var(--white); border: 1px solid var(--gray-100);
+	border-radius: var(--r-lg); padding: var(--sp-5);
+	box-shadow: var(--shadow-card);
+	position: relative; overflow: hidden;
+	transition: transform .15s ease, box-shadow .15s ease;
+}
+.kpi:hover { transform: translateY(-2px); box-shadow: 0 6px 18px -6px rgba(5, 19, 60, .18); }
+.kpi::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--gradient); opacity: 0; transition: opacity .15s ease; }
+.kpi:hover::before { opacity: 1; }
+.kpi-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--gray-400); display: flex; align-items: center; gap: 6px; }
+.kpi-value { font-size: 30px; font-weight: 700; letter-spacing: -.02em; margin-top: var(--sp-2); }
+.kpi-value small { font-size: 15px; color: var(--gray-400); font-weight: 600; }
+.kpi-foot { font-size: 12px; color: var(--gray-400); margin-top: var(--sp-1); }
+
+/* Filter chips */
+.filter-row { display: flex; gap: var(--sp-2); flex-wrap: wrap; margin-bottom: var(--sp-5); }
+.filter-chip {
+	padding: 6px 14px; border-radius: var(--r-pill);
+	background: var(--white); border: 1px solid var(--gray-200);
+	color: var(--gray-500); font-size: 13px; font-weight: 600;
+	transition: all .12s ease;
+}
+.filter-chip:hover { border-color: var(--navy-dark); color: var(--navy-dark); }
+.filter-chip.active { background: var(--navy-dark); color: var(--white); border-color: var(--navy-dark); }
+
+/* Cards grid (vehicles, trips) */
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--sp-4); }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-4); }
+
+/* Vehicle card */
+.vehicle-card { transition: transform .15s ease, box-shadow .15s ease; }
+.vehicle-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px -8px rgba(5, 19, 60, .2); }
+.vehicle-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--sp-4); }
+.vehicle-icon {
+	width: 44px; height: 44px; border-radius: var(--r-md);
+	background: var(--gradient-soft); color: var(--navy-dark);
+	display: flex; align-items: center; justify-content: center;
+}
+.vehicle-name { font-size: 16px; font-weight: 700; }
+.vehicle-reg { font-size: 12px; color: var(--gray-400); }
+.vehicle-stats { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-3) 0; margin-top: var(--sp-2); }
+.vehicle-stat .v-label { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--gray-400); font-weight: 600; }
+.vehicle-stat .v-value { font-size: 16px; font-weight: 700; margin-top: 2px; }
+
+/* Trip row / list */
+.trip-list { display: flex; flex-direction: column; gap: var(--sp-3); }
+.trip-item {
+	background: var(--white); border: 1px solid var(--gray-100);
+	border-radius: var(--r-lg); padding: var(--sp-4) var(--sp-5);
+	box-shadow: var(--shadow-card);
+	display: flex; align-items: center; gap: var(--sp-4);
+	transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+	cursor: pointer;
+}
+.trip-item:hover { transform: translateY(-1px); box-shadow: 0 6px 18px -6px rgba(5, 19, 60, .16); border-color: var(--gray-200); }
+.trip-icon {
+	width: 42px; height: 42px; border-radius: var(--r-md); flex-shrink: 0;
+	display: flex; align-items: center; justify-content: center;
+	background: var(--gray-100); color: var(--navy-dark);
+}
+.trip-main { flex: 1; min-width: 0; }
+.trip-title { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: var(--sp-2); flex-wrap: wrap; }
+.trip-meta { font-size: 13px; color: var(--gray-400); margin-top: 2px; display: flex; gap: var(--sp-3); flex-wrap: wrap; }
+.trip-meta span { display: inline-flex; align-items: center; gap: 4px; }
+.trip-stats { text-align: right; flex-shrink: 0; }
+.trip-stats .ts-value { font-size: 15px; font-weight: 700; }
+.trip-stats .ts-label { font-size: 11px; color: var(--gray-400); text-transform: uppercase; letter-spacing: .05em; font-weight: 600; }
+.trip-actions { display: flex; gap: var(--sp-2); flex-shrink: 0; }
+
+/* Table (recent trips / fuel list) */
+.table-wrap { overflow-x: auto; border: 1px solid var(--gray-100); border-radius: var(--r-lg); background: var(--white); box-shadow: var(--shadow-card); }
+table.data { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 640px; }
+table.data th {
+	text-align: left; padding: 12px var(--sp-4);
+	font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em;
+	color: var(--gray-400); border-bottom: 1px solid var(--gray-100); background: var(--gray-100);
+}
+table.data td { padding: 13px var(--sp-4); border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
+table.data tr:last-child td { border-bottom: none; }
+table.data tbody tr { transition: background .1s ease; }
+table.data tbody tr:hover { background: #FAFAFB; }
+
+/* -------------------------------- Modals -------------------------------- */
+.modal-backdrop {
+	position: fixed; inset: 0; z-index: 60;
+	background: rgba(5, 19, 60, .45);
+	backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+	display: flex; align-items: flex-start; justify-content: center;
+	padding: var(--sp-6) var(--sp-4);
+	overflow-y: auto;
+	animation: fade .15s ease both;
+}
+.modal {
+	width: 100%; max-width: 520px;
+	background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+	border: 1px solid var(--gray-100); border-radius: var(--r-xl);
+	box-shadow: var(--shadow-pop);
+	margin: auto 0;
+	animation: pop .22s cubic-bezier(.2, .9, .3, 1.2) both;
+}
+.modal-head { display: flex; align-items: flex-start; justify-content: space-between; padding: var(--sp-5) var(--sp-5) 0; }
+.modal-title { font-size: 18px; font-weight: 700; }
+.modal-sub { font-size: 13px; color: var(--gray-400); margin-top: 2px; }
+.modal-body { padding: var(--sp-5); }
+.modal-foot { display: flex; justify-content: flex-end; gap: var(--sp-2); padding: 0 var(--sp-5) var(--sp-5); }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+
+/* -------------------------------- Toasts -------------------------------- */
+.toast-root { position: fixed; bottom: var(--sp-5); right: var(--sp-5); z-index: 80; display: flex; flex-direction: column; gap: var(--sp-2); }
+.toast {
+	display: flex; align-items: center; gap: 10px;
+	background: var(--navy-dark); color: var(--white);
+	padding: 12px 16px; border-radius: var(--r-md);
+	font-size: 13px; font-weight: 500; max-width: 380px;
+	box-shadow: var(--shadow-pop);
+	animation: toast-in .25s ease both;
+}
+.toast i[data-lucide] { color: var(--mint); }
+.toast.toast-error i[data-lucide] { color: #FCA5A5; }
+@keyframes toast-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* ------------------------------ Empty state ----------------------------- */
+.empty { text-align: center; padding: var(--sp-7) var(--sp-5); color: var(--gray-400); }
+.empty-icon {
+	width: 56px; height: 56px; margin: 0 auto var(--sp-4);
+	border-radius: var(--r-xl); background: var(--gray-100); color: var(--gray-400);
+	display: flex; align-items: center; justify-content: center;
+}
+.empty h3 { font-size: 16px; font-weight: 700; color: var(--navy-dark); margin-bottom: 4px; }
+.empty p { font-size: 14px; max-width: 40ch; margin: 0 auto var(--sp-4); }
+
+/* Skeleton loading */
+.skeleton { border-radius: var(--r-sm); background: linear-gradient(90deg, var(--gray-100), #ECECEE, var(--gray-100)); background-size: 200% 100%; animation: shimmer 1.2s infinite; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+/* Account page */
+.profile-banner {
+	background: var(--gradient); border-radius: var(--r-xl);
+	padding: var(--sp-6); color: var(--white);
+	display: flex; align-items: center; gap: var(--sp-5);
+	box-shadow: var(--shadow-pop);
+	margin-bottom: var(--sp-5);
+}
+.profile-banner .avatar { width: 56px; height: 56px; font-size: 22px; background: var(--white); }
+.profile-name { font-size: 24px; font-weight: 700; }
+.profile-role { font-size: 14px; opacity: .85; }
+
+.detail-list { display: flex; flex-direction: column; }
+.detail-row { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-4); padding: 13px 0; border-bottom: 1px solid var(--gray-100); }
+.detail-row:last-child { border-bottom: none; }
+.detail-label { font-size: 13px; color: var(--gray-400); font-weight: 500; display: flex; align-items: center; gap: 8px; }
+.detail-value { font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: var(--sp-2); text-align: right; }
+
+/* ------------------------------ Responsive ------------------------------ */
+@media (max-width: 980px) {
+	.kpi-grid { grid-template-columns: repeat(2, 1fr); }
+	.grid-3 { grid-template-columns: repeat(2, 1fr); }
+	.login-grid { grid-template-columns: 1fr; gap: var(--sp-6); }
+	.login-hero { text-align: center; }
+	.login-hero .gradient-divider, .login-hero .badge { margin-left: auto; margin-right: auto; }
+	.feature-list { align-items: flex-start; }
+	.feature-list li { justify-content: center; width: 100%; }
+}
+@media (max-width: 720px) {
+	.sidebar {
+		position: fixed; left: 0; top: 0; bottom: 0; z-index: 50;
+		transform: translateX(-100%);
+		transition: transform .22s ease;
+	}
+	.sidebar.open { transform: none; box-shadow: var(--shadow-pop); }
+	.sidebar-backdrop { display: block; position: fixed; inset: 0; z-index: 45; background: rgba(5, 19, 60, .4); opacity: 0; pointer-events: none; transition: opacity .2s ease; }
+	.sidebar-backdrop.show { opacity: 1; pointer-events: auto; }
+	.menu-toggle { display: inline-flex; }
+	.topbar { padding: var(--sp-3) var(--sp-4); }
+	.topbar-right .btn { display: none; }
+	.topbar-right { gap: var(--sp-2); }
+	.view { padding: var(--sp-4); }
+	.grid-2, .grid-3 { grid-template-columns: 1fr; }
+	.form-row { grid-template-columns: 1fr; }
+	.trip-detail { grid-template-columns: repeat(2, 1fr); }
+	.trip-item { flex-wrap: wrap; }
+.trip-detail {
+	flex-basis: 100%; display: none;
+	margin-top: var(--sp-3); padding-top: var(--sp-4);
+	border-top: 1px dashed var(--gray-200);
+	grid-template-columns: repeat(4, 1fr); gap: var(--sp-3) var(--sp-4);
+}
+.trip-item.open .trip-detail { display: grid; }
+.trip-item .chev { transition: transform .18s ease; }
+.trip-item.open .chev { transform: rotate(180deg); }
+.d-item { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.d-label { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--gray-400); font-weight: 600; }
+.d-value { font-size: 14px; font-weight: 600; word-break: break-word; }
+	.trip-stats { text-align: left; }
+	.trip-actions { width: 100%; justify-content: flex-end; }
+	.profile-banner { flex-direction: column; text-align: center; }
+}
+
+</style>
 </head>
 <body>
 
@@ -113,12 +629,1030 @@
 
 	<script>
 		window.FP = {
-			user: {{ user | tojson }},
-			csrf: {{ csrf_token | tojson }},
-			full_name: {{ full_name | tojson }}
+			user: {{ (user or '') | tojson }},
+			csrf: {{ (csrf_token or '') | tojson }},
+			full_name: {{ (full_name or '') | tojson }}
 		};
 	</script>
 	<script src="https://unpkg.com/lucide@latest"></script>
-	<script src="index.js"></script>
+	<script>
+/* ==========================================================================
+   Bizaxl Fleet Portal — application logic
+   Talks to the whitelisted fleet_log.api endpoints under the normal
+   permission system (drivers are scoped to their own records server-side).
+   ========================================================================== */
+(function () {
+	"use strict";
+
+	// ---------------------------------------------------------------- utils
+	const $ = (sel, root) => (root || document).querySelector(sel);
+	const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
+
+	const state = {
+		boot: null,
+		vehicles: [],
+		trips: [],
+		fuelLogs: [],
+		expenses: [],
+		view: "dashboard",
+		tripFilter: "All",
+	};
+
+	let csrfToken = (window.FP && window.FP.csrf) || "";
+
+	function esc(s) {
+		return String(s == null ? "" : s)
+			.replace(/&/g, "&amp;")
+			.replace(/</g, "&lt;")
+			.replace(/>/g, "&gt;")
+			.replace(/"/g, "&quot;")
+			.replace(/'/g, "&#39;");
+	}
+
+	function parseDT(s) {
+		if (!s) return null;
+		const t = new Date(s.includes("T") ? s : s.replace(" ", "T"));
+		return isNaN(t.getTime()) ? null : t;
+	}
+	function fmtDT(s) {
+		const t = parseDT(s);
+		if (!t) return "—";
+		return t.toLocaleString(undefined, {
+			day: "numeric", month: "short", year: "numeric",
+			hour: "2-digit", minute: "2-digit",
+		});
+	}
+	function fmtDate(s) {
+		const t = parseDT(s);
+		if (!t) return "—";
+		return t.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+	}
+	function fmtNum(n, d) {
+		if (n == null || n === "") return "—";
+		const v = Number(n);
+		if (isNaN(v)) return "—";
+		return v.toLocaleString(undefined, { maximumFractionDigits: d == null ? 1 : d });
+	}
+	function fmtMoney(n) {
+		const v = Number(n || 0);
+		return new Intl.NumberFormat(undefined, {
+			style: "currency", currency: "INR", maximumFractionDigits: 2,
+		}).format(v);
+	}
+	function isSameMonth(dt, ref) {
+		return dt && dt.getFullYear() === ref.getFullYear() && dt.getMonth() === ref.getMonth();
+	}
+	function initials(name) {
+		return String(name || "?")
+			.split(/\s+/)
+			.filter(Boolean)
+			.slice(0, 2)
+			.map((p) => p[0].toUpperCase())
+			.join("");
+	}
+	function greeting() {
+		const h = new Date().getHours();
+		if (h < 12) return "Good morning";
+		if (h < 17) return "Good afternoon";
+		return "Good evening";
+	}
+	function firstName(name) {
+		return String(name || "").split(/\s+/)[0] || "there";
+	}
+
+	// ------------------------------------------------------------ API layer
+	function extractError(data) {
+		if (data && data._server_messages && data._server_messages.length) {
+			try {
+				const m = JSON.parse(data._server_messages[0]);
+				if (m && m.message) return m.message.replace(/<[^>]+>/g, "").trim();
+			} catch (e) { /* ignore */ }
+		}
+		if (data && data.exc_type) return String(data.exc_type).split(".").pop();
+		if (data && data.message && typeof data.message === "string") return data.message;
+		return "Something went wrong. Please try again.";
+	}
+
+	async function apiCall(method, args) {
+		if (!csrfToken) {
+			try {
+				const r = await fetch("/api/method/frappe.auth.get_csrf_token", { credentials: "same-origin" });
+				const d = await r.json();
+				csrfToken = (d.message && d.message.csrf_token) || "";
+			} catch (e) { /* offline or blocked */ }
+		}
+		let res;
+		try {
+			res = await fetch("/api/method/" + method, {
+				method: "POST",
+				credentials: "same-origin",
+				headers: {
+					"Content-Type": "application/json",
+					"Accept": "application/json",
+					"X-Frappe-CSRF-Token": csrfToken || "",
+				},
+				body: JSON.stringify(args || {}),
+			});
+		} catch (e) {
+			throw new Error("Network error — check your connection.");
+		}
+		let data = {};
+		try { data = await res.json(); } catch (e) { /* non-JSON */ }
+		if (!res.ok || data.exc_type) throw new Error(extractError(data));
+		return data.message;
+	}
+
+	// ------------------------------------------------------------- rendering
+	function refreshIcons() {
+		if (window.lucide) {
+			try { lucide.createIcons(); } catch (e) { /* ignore */ }
+		}
+	}
+
+	function chip(kind, label, dot) {
+		return `<span class="chip chip-${kind}">${dot ? '<span class="dot"></span>' : ""}${esc(label)}</span>`;
+	}
+
+	function statusChip(status) {
+		const s = status || "Assigned";
+		const map = {
+			"Assigned": ["assigned", "Assigned"],
+			"In Progress": ["progress", "In Progress"],
+			"Completed": ["completed", "Completed"],
+			"Reconciled": ["reconciled", "Reconciled"],
+			"Cancelled": ["cancelled", "Cancelled"],
+		};
+		const [k, l] = map[s] || ["cancelled", s];
+		return chip(k, l, true);
+	}
+
+	function flagChip(flag) {
+		if (!flag || flag === "Normal") return chip("normal", "Normal");
+		if (flag === "Below Average") return chip("below", "Below Avg");
+		return chip("critical", "Critical");
+	}
+
+	function sanityChip(flag) {
+		return flag === "Suspicious" ? chip("suspicious", "Suspicious") : chip("ok", "OK");
+	}
+
+	function vehicleLabel(id) {
+		if (!id) return "—";
+		const v = state.vehicles.find((x) => x.name === id);
+		if (!v) return id;
+		return v.registration_number || v.license_plate || v.name;
+	}
+
+	function skeleton(rows) {
+		let out = "";
+		for (let i = 0; i < (rows || 3); i++) out += '<div class="skeleton" style="height:64px;margin-bottom:12px"></div>';
+		return out;
+	}
+
+	function emptyState(icon, title, text, ctaHtml) {
+		return `<div class="empty">
+			<div class="empty-icon"><i data-lucide="${icon}" width="26" height="26"></i></div>
+			<h3>${esc(title)}</h3>
+			<p>${esc(text)}</p>
+			${ctaHtml || ""}
+		</div>`;
+	}
+
+	// ---------------------------------------------------------------- toasts
+	function toast(msg, type) {
+		const root = $("#toast-root");
+		const el = document.createElement("div");
+		el.className = "toast" + (type === "error" ? " toast-error" : "");
+		el.innerHTML = `<i data-lucide="${type === "error" ? "circle-alert" : "circle-check"}" width="18" height="18"></i><span></span>`;
+		$("span", el).textContent = msg;
+		root.appendChild(el);
+		refreshIcons();
+		setTimeout(() => {
+			el.style.transition = "opacity .35s ease";
+			el.style.opacity = "0";
+			setTimeout(() => el.remove(), 380);
+		}, 3400);
+	}
+
+	// ---------------------------------------------------------------- modals
+	let escHandler = null;
+
+	function openModal(opts) {
+		const root = $("#modal-root");
+		root.innerHTML = `
+			<div class="modal-backdrop" id="modal-backdrop">
+				<div class="modal" role="dialog" aria-modal="true">
+					<div class="modal-head">
+						<div>
+							<div class="modal-title">${esc(opts.title || "")}</div>
+							${opts.sub ? `<div class="modal-sub">${esc(opts.sub)}</div>` : ""}
+						</div>
+						<button type="button" class="btn-icon" data-close aria-label="Close"><i data-lucide="x" width="18" height="18"></i></button>
+					</div>
+					<div class="modal-body"></div>
+					${opts.footer !== false ? '<div class="modal-foot"></div>' : ""}
+				</div>
+			</div>`;
+
+		const backdrop = $("#modal-backdrop", root);
+		const body = $(".modal-body", root);
+		body.innerHTML = opts.body || "";
+
+		const foot = $(".modal-foot", root);
+		if (foot && opts.footer !== false) {
+			foot.innerHTML = `
+				<button type="button" class="btn btn-tertiary" data-close>Cancel</button>
+				<button type="button" class="btn ${opts.danger ? "btn-danger" : "btn-primary"}" id="modal-ok">
+					<span class="btn-label">${esc(opts.okLabel || "Save")}</span>
+					<span class="btn-spinner hidden"></span>
+				</button>`;
+		}
+
+		const close = () => {
+			root.innerHTML = "";
+			if (escHandler) { document.removeEventListener("keydown", escHandler); escHandler = null; }
+		};
+		$("[data-close]", root).forEach((b) => b.addEventListener("click", close));
+		backdrop.addEventListener("click", (e) => { if (e.target === backdrop) close(); });
+		escHandler = (e) => { if (e.key === "Escape") close(); };
+		document.addEventListener("keydown", escHandler);
+
+		refreshIcons();
+		if (opts.onOpen) opts.onOpen(body);
+
+		if (foot && opts.footer !== false) {
+			const ok = $("#modal-ok", root);
+			ok.addEventListener("click", async () => {
+				const btn = ok;
+				const label = $(".btn-label", btn);
+				const spin = $(".btn-spinner", btn);
+				btn.disabled = true; label.classList.add("hidden"); spin.classList.remove("hidden");
+				try {
+					await opts.onSubmit(body);
+					close();
+				} catch (err) {
+					btn.disabled = false; label.classList.remove("hidden"); spin.classList.add("hidden");
+					toast(err.message || "Failed", "error");
+				}
+			});
+		}
+		return { body, close };
+	}
+
+	function busy(btn, on) {
+		const label = $(".btn-label", btn);
+		const spin = $(".btn-spinner", btn);
+		if (!label || !spin) return;
+		btn.disabled = on;
+		label.classList.toggle("hidden", on);
+		spin.classList.toggle("hidden", !on);
+	}
+
+	// ----------------------------------------------------------- field helpers
+	function fieldHTML(label, inputHtml, hint) {
+		return `<label class="field"><span class="field-label">${esc(label)}</span>${inputHtml}${hint ? `<span class="form-hint">${esc(hint)}</span>` : ""}</label>`;
+	}
+
+	function vehicleOptions(selected) {
+		if (!state.vehicles.length) return '<option value="">No vehicles available</option>';
+		return state.vehicles.map((v) => {
+			const label = v.registration_number || v.license_plate || v.name;
+			return `<option value="${esc(v.name)}" ${v.name === selected ? "selected" : ""}>${esc(label)}</option>`;
+		}).join("");
+	}
+
+	// ============================================================== AUTH
+	async function checkAuth() {
+		const user = await apiCall("frappe.auth.get_logged_user");
+		return user && user !== "Guest";
+	}
+
+	function showLogin() {
+		$("#app").classList.add("hidden");
+		$("#login-view").classList.remove("hidden");
+		refreshIcons();
+		$("#login-usr").focus();
+	}
+
+	function showApp() {
+		$("#login-view").classList.add("hidden");
+		$("#app").classList.remove("hidden");
+		renderUserChips();
+		refreshIcons();
+		navigate(state.view);
+	}
+
+	function renderUserChips() {
+		const b = state.boot || {};
+		const name = b.full_name || b.user || "User";
+		const role = b.is_fleet_manager ? "Fleet Manager" : "Driver";
+		const chipHtml = `
+			<div class="avatar">${esc(initials(name))}</div>
+			<div>
+				<div class="u-name">${esc(name)}</div>
+				<div class="u-role">${esc(role)}</div>
+			</div>`;
+		$("#top-user-chip").innerHTML = chipHtml;
+		$("#side-user-chip").innerHTML = chipHtml;
+		refreshIcons();
+	}
+
+	// ============================================================== DATA
+	async function loadAll() {
+		const [v, t, f, e] = await Promise.all([
+			apiCall("fleet_log.api.get_my_vehicles").catch(() => []),
+			apiCall("fleet_log.api.get_my_trips", { limit: 200 }).catch(() => []),
+			apiCall("fleet_log.api.get_my_fuel_logs", { limit: 200 }).catch(() => []),
+			apiCall("fleet_log.api.get_my_expenses", { limit: 200 }).catch(() => []),
+		]);
+		state.vehicles = v || [];
+		state.trips = t || [];
+		state.fuelLogs = f || [];
+		state.expenses = e || [];
+	}
+
+	async function reload() {
+		await loadAll();
+		renderView();
+	}
+
+	// ============================================================== VIEWS
+	const VIEWS = {
+		dashboard: { title: "Dashboard", sub: "Fleet at a glance" },
+		trips: { title: "Trips", sub: "Create, run and reconcile trips" },
+		fuel: { title: "Fuel Logs", sub: "Fill-ups, yield and sanity flags" },
+		vehicles: { title: "Vehicles", sub: "Fleet odometer and yield" },
+		expenses: { title: "Expenses", sub: "Tolls, parking and other trip costs" },
+		account: { title: "Account", sub: "Your profile and licence" },
+	};
+
+	function navigate(view) {
+		if (!VIEWS[view]) view = "dashboard";
+		state.view = view;
+		$(".nav-item").forEach((a) => a.classList.toggle("active", a.dataset.view === view));
+		$("#view-title").textContent = VIEWS[view].title;
+		$("#view-sub").textContent = VIEWS[view].sub;
+		closeSidebar();
+		if (window.location.hash !== "#" + view) window.location.hash = view;
+		renderView();
+	}
+
+	function renderView() {
+		const el = $("#view");
+		el.innerHTML = skeleton(2);
+		switch (state.view) {
+			case "dashboard": renderDashboard(el); break;
+			case "trips": renderTrips(el); break;
+			case "fuel": renderFuel(el); break;
+			case "vehicles": renderVehicles(el); break;
+			case "expenses": renderExpenses(el); break;
+			case "account": renderAccount(el); break;
+		}
+		refreshIcons();
+	}
+
+	// ------------------------------------------------------------- dashboard
+	function kpiCard(label, value, foot, icon) {
+		return `<div class="kpi">
+			<div class="kpi-label"><i data-lucide="${icon}" width="14" height="14"></i>${esc(label)}</div>
+			<div class="kpi-value">${value}</div>
+			<div class="kpi-foot">${esc(foot)}</div>
+		</div>`;
+	}
+
+	function renderDashboard(el) {
+		const b = state.boot || {};
+		const now = new Date();
+		const active = state.trips.filter((t) => ["Assigned", "In Progress"].includes(t.status || "Assigned"));
+		const monthTrips = state.trips.filter((t) => isSameMonth(parseDT(t.start_time) || parseDT(t.creation), now));
+		const monthFuel = state.fuelLogs
+			.filter((f) => isSameMonth(parseDT(f.creation), now))
+			.reduce((s, f) => s + Number(f.fuel_quantity || 0), 0);
+		const flagged = state.trips.filter((t) => t.yield_flag && t.yield_flag !== "Normal").length +
+			state.fuelLogs.filter((f) => f.sanity_flag === "Suspicious").length;
+
+		const roleBadge = b.is_fleet_manager
+			? '<span class="badge badge-blue"><i data-lucide="shield-check" width="12" height="12"></i> Fleet Manager</span>'
+			: '<span class="badge badge-mint"><i data-lucide="user-check" width="12" height="12"></i> Driver</span>';
+
+		let licenseAlert = "";
+		const drv = b.driver;
+		if (drv && !b.is_fleet_manager && (drv.license_expiry || drv.expiry_date)) {
+			const exp = drv.license_expiry || drv.expiry_date;
+			const days = Math.ceil((parseDT(exp) - Date.now()) / 86400000);
+			if (days <= 30) {
+				licenseAlert = `<div class="card" style="margin-bottom:24px;border-color:rgba(245,158,11,.4);background:#FFFDF5">
+					<div style="display:flex;align-items:center;gap:12px">
+						<i data-lucide="${days < 0 ? "alert-octagon" : "alert-triangle"}" width="22" height="22" style="color:#B45309;flex-shrink:0"></i>
+						<div>
+							<div style="font-weight:700;color:#92400E">Driving licence ${days < 0 ? "expired" : "expiring soon"}</div>
+							<div style="font-size:13px;color:#A16207">${days < 0 ? Math.abs(days) + " day(s) ago — renew before driving" : "Expires in " + days + " day(s)"}. Vehicle &amp; trip access may be restricted.</div>
+						</div>
+					</div>
+				</div>`;
+			}
+		}
+
+		const recent = state.trips.slice(0, 5);
+
+		el.innerHTML = `
+			${licenseAlert}
+			<div class="section-head">
+				<div>
+					<h2>${esc(greeting())}, ${esc(firstName(b.full_name || b.user))} 👋</h2>
+					<p>${esc(new Date().toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long", year: "numeric" }))} &nbsp;·&nbsp; ${roleBadge}</p>
+				</div>
+				<div class="section-actions">
+					<button class="btn btn-primary" data-action="new-trip"><i data-lucide="plus" width="16" height="16"></i> New Trip</button>
+					<button class="btn btn-secondary" data-action="log-fuel"><i data-lucide="fuel" width="16" height="16"></i> Log Fuel</button>
+				</div>
+			</div>
+
+			<div class="kpi-grid">
+				${kpiCard("Active Trips", fmtNum(active.length, 0), "Assigned or in progress", "activity")}
+				${kpiCard("Trips This Month", fmtNum(monthTrips.length, 0), "by start date", "calendar")}
+				${kpiCard("Fuel This Month", fmtNum(monthFuel, 1) + " <small>L</small>", "total litres logged", "fuel")}
+				${kpiCard("Flagged Items", fmtNum(flagged, 0), "yield &amp; sanity flags", "flag")}
+			</div>
+
+			<div class="section-head" style="margin-bottom:16px">
+				<div><h2 style="font-size:18px">Recent trips</h2><p>Latest activity across the fleet</p></div>
+				<button class="btn btn-ghost btn-sm" data-action="go-trips">View all <i data-lucide="arrow-right" width="14" height="14"></i></button>
+			</div>
+			${recent.length ? `<div class="trip-list" style="margin-bottom:32px">${recent.map(tripRow).join("")}</div>` : emptyState("route", "No trips yet", "Create your first trip to start tracking odometer and fuel yield.")}
+
+			${state.vehicles.length ? `
+			<div class="section-head" style="margin-bottom:16px">
+				<div><h2 style="font-size:18px">Fleet snapshot</h2><p>Current odometer and yield per vehicle</p></div>
+			</div>
+			<div class="grid-3">${state.vehicles.slice(0, 6).map(vehicleCard).join("")}</div>` : ""}
+		`;
+		bindCommonActions(el);
+	}
+
+	// --------------------------------------------------------------- trips
+	function tripDetail(t) {
+		const label = vehicleLabel(t.vehicle);
+		return `<div class="trip-detail">
+				<div class="d-item"><span class="d-label">Vehicle</span><span class="d-value">${esc(label)}</span></div>
+				<div class="d-item"><span class="d-label">Driver</span><span class="d-value">${esc(t.driver || "—")}</span></div>
+				<div class="d-item"><span class="d-label">Start odometer</span><span class="d-value">${fmtNum(t.start_odometer, 0)} km</span></div>
+				<div class="d-item"><span class="d-label">End odometer</span><span class="d-value">${fmtNum(t.end_odometer, 0)} km</span></div>
+				<div class="d-item"><span class="d-label">Start time</span><span class="d-value">${esc(fmtDT(t.start_time))}</span></div>
+				<div class="d-item"><span class="d-label">End time</span><span class="d-value">${esc(fmtDT(t.end_time))}</span></div>
+				<div class="d-item"><span class="d-label">Start location</span><span class="d-value">${esc(t.start_location || "—")}</span></div>
+				<div class="d-item"><span class="d-label">End location</span><span class="d-value">${esc(t.end_location || "—")}</span></div>
+				<div class="d-item"><span class="d-label">Distance</span><span class="d-value">${fmtNum(t.distance_covered, 1)} km</span></div>
+				<div class="d-item"><span class="d-label">Fuel used</span><span class="d-value">${fmtNum(t.total_fuel_used, 1)} L</span></div>
+				<div class="d-item"><span class="d-label">Trip yield</span><span class="d-value">${fmtNum(t.trip_yield, 2)} km/L</span></div>
+				<div class="d-item"><span class="d-label">Yield flag</span><span class="d-value">${flagChip(t.yield_flag)}</span></div>
+			</div>`;
+	}
+
+	function tripRow(t) {
+		const status = t.status || "Assigned";
+		const label = vehicleLabel(t.vehicle);
+		const actions = tripActions(t);
+		return `
+			<div class="trip-item" data-trip="${esc(t.name)}">
+				<div class="trip-icon"><i data-lucide="route" width="20" height="20"></i></div>
+				<div class="trip-main">
+					<div class="trip-title">
+						<span>${esc(t.purpose || label)}</span>
+						${statusChip(status)}
+						${t.yield_flag && t.yield_flag !== "Normal" ? flagChip(t.yield_flag) : ""}
+					</div>
+					<div class="trip-meta">
+						<span><i data-lucide="truck" width="13" height="13"></i>${esc(label)}</span>
+						<span><i data-lucide="calendar" width="13" height="13"></i>${esc(fmtDT(t.start_time))}</span>
+						<span><i data-lucide="gauge" width="13" height="13"></i>${fmtNum(t.distance_covered, 1)} km</span>
+						<span><i data-lucide="droplets" width="13" height="13"></i>${fmtNum(t.total_fuel_used, 1)} L</span>
+						${t.trip_yield ? `<span><i data-lucide="zap" width="13" height="13"></i>${fmtNum(t.trip_yield, 2)} km/L</span>` : ""}
+					</div>
+				</div>
+				<div class="trip-stats">
+					<div class="ts-value">${fmtNum(t.distance_covered || t.end_odometer || t.start_odometer, 0)}</div>
+					<div class="ts-label">km · <i data-lucide="chevron-down" width="13" height="13" class="chev"></i></div>
+				</div>
+				${actions ? `<div class="trip-actions" data-stop>${actions}</div>` : ""}
+				${tripDetail(t)}
+			</div>`;
+	}
+
+	function tripActions(t) {
+		const status = t.status || "Assigned";
+		const isMgr = !!(state.boot && state.boot.is_fleet_manager);
+		const out = [];
+		if (status === "Assigned") {
+			out.push(`<button class="btn btn-primary btn-sm" data-act="begin" data-trip="${esc(t.name)}">Begin Trip</button>`);
+		}
+		if (status === "In Progress") {
+			out.push(`<button class="btn btn-primary btn-sm" data-act="complete" data-trip="${esc(t.name)}">Complete Trip</button>`);
+		}
+		if (status === "Completed" && isMgr) {
+			out.push(`<button class="btn btn-secondary btn-sm" data-act="reconcile" data-trip="${esc(t.name)}">Reconcile</button>`);
+		}
+		if (["Assigned", "In Progress", "Completed"].includes(status) && isMgr) {
+			out.push(`<button class="btn btn-ghost btn-sm" data-act="cancel" data-trip="${esc(t.name)}">Cancel</button>`);
+		}
+		return out.join("");
+	}
+
+	function renderTrips(el) {
+		const filters = ["All", "Assigned", "In Progress", "Completed", "Reconciled", "Cancelled"];
+		const count = (f) => (f === "All" ? state.trips.length : state.trips.filter((t) => (t.status || "Assigned") === f).length);
+		const rows = state.trips.filter((t) => state.tripFilter === "All" || (t.status || "Assigned") === state.tripFilter);
+
+		el.innerHTML = `
+			<div class="section-head">
+				<div><h2>Trips</h2><p>${fmtNum(state.trips.length, 0)} trips visible to you</p></div>
+				<div class="section-actions">
+					<button class="btn btn-primary" data-action="new-trip"><i data-lucide="plus" width="16" height="16"></i> New Trip</button>
+				</div>
+			</div>
+			<div class="filter-row">
+				${filters.map((f) => `<button class="filter-chip ${state.tripFilter === f ? "active" : ""}" data-filter="${f}">${f} <span style="opacity:.6">· ${count(f)}</span></button>`).join("")}
+			</div>
+			${rows.length ? `<div class="trip-list">${rows.map(tripRow).join("")}</div>` : emptyState("route", "No trips here", "No trips match this filter yet. Create a new trip to get started.", '<button class="btn btn-primary" data-action="new-trip"><i data-lucide="plus" width="16" height="16"></i> New Trip</button>')}
+		`;
+		bindCommonActions(el);
+		$(".filter-chip", el).forEach((c) =>
+			c.addEventListener("click", () => { state.tripFilter = c.dataset.filter; renderTrips(el); })
+		);
+		$("[data-act]", el).forEach((b) => b.addEventListener("click", (e) => {
+			e.stopPropagation();
+			const trip = state.trips.find((t) => t.name === b.dataset.trip);
+			if (trip) handleTripAction(b.dataset.act, trip);
+		}));
+		$(".trip-item", el).forEach((item) =>
+			item.addEventListener("click", (e) => {
+				if (e.target.closest("button") || e.target.closest("[data-stop]")) return;
+				item.classList.toggle("open");
+			})
+		);
+		refreshIcons();
+	}
+
+	function handleTripAction(act, trip) {
+		if (act === "begin") beginTripModal(trip);
+		if (act === "complete") completeTripModal(trip);
+		if (act === "reconcile") confirmAction("Reconcile trip", `Reconcile <b>${esc(trip.name)}</b>? This locks the trip and rolls its fuel yield into the vehicle's rolling average.`, "Reconcile", () => updateStatus(trip, "Reconciled"));
+		if (act === "cancel") confirmAction("Cancel trip", `Cancel <b>${esc(trip.name)}</b>? This cannot be undone from the portal.`, "Cancel trip", () => updateStatus(trip, "Cancelled"), true);
+	}
+
+	async function updateStatus(trip, status) {
+		const r = await apiCall("fleet_log.api.update_trip", { name: trip.name, status: status });
+		toast(`Trip ${esc(trip.name)} → ${status}`);
+		await reload();
+	}
+
+	// --------------------------------------------------------------- fuel
+	function renderFuel(el) {
+		const totalCost = state.fuelLogs.reduce((s, f) => s + Number(f.fuel_cost || 0), 0);
+		const totalLitres = state.fuelLogs.reduce((s, f) => s + Number(f.fuel_quantity || 0), 0);
+		const rows = state.fuelLogs.map((f) => `
+			<tr>
+				<td>${esc(fmtDate(f.creation))}</td>
+				<td><b>${esc(vehicleLabel(f.vehicle))}</b></td>
+				<td>${fmtNum(f.odometer_at_fill, 0)} km</td>
+				<td>${fmtNum(f.fuel_quantity, 2)} L</td>
+				<td>${fmtNum(f.price_per_litre, 2)}</td>
+				<td>${fmtMoney(f.fuel_cost)}</td>
+				<td>${fmtNum(f.fill_up_yield, 2)} km/L</td>
+				<td>${sanityChip(f.sanity_flag)}</td>
+				<td>${f.trip ? `<span class="badge">${esc(f.trip)}</span>` : '<span class="badge">Standalone</span>'}</td>
+			</tr>`).join("");
+
+		el.innerHTML = `
+			<div class="section-head">
+				<div><h2>Fuel Logs</h2><p>${fmtNum(state.fuelLogs.length, 0)} fill-ups · ${fmtNum(totalLitres, 1)} L · ${fmtMoney(totalCost)}</p></div>
+				<div class="section-actions">
+					<button class="btn btn-secondary" data-action="log-fuel"><i data-lucide="fuel" width="16" height="16"></i> Log Fuel</button>
+				</div>
+			</div>
+			${rows ? `<div class="table-wrap"><table class="data">
+				<thead><tr><th>Date</th><th>Vehicle</th><th>Odometer</th><th>Qty</th><th>₹/L</th><th>Cost</th><th>Yield</th><th>Sanity</th><th>Trip</th></tr></thead>
+				<tbody>${rows}</tbody>
+			</table></div>` : emptyState("fuel", "No fuel logs yet", "Log your first fill-up to start tracking yield and price per litre.")}
+		`;
+		bindCommonActions(el);
+		refreshIcons();
+	}
+
+	// ------------------------------------------------------------ vehicles
+	function vehicleCard(v) {
+		const label = v.registration_number || v.license_plate || v.name;
+		return `<div class="card vehicle-card">
+			<div class="vehicle-head">
+				<div class="vehicle-icon"><i data-lucide="truck" width="22" height="22"></i></div>
+				${v.vehicle_type ? `<span class="badge">${esc(v.vehicle_type)}</span>` : ""}
+			</div>
+			<div class="vehicle-name">${esc(label)}</div>
+			<div class="vehicle-reg">${v.fuel_type ? esc(v.fuel_type) : "—"} fuel</div>
+			<div class="vehicle-stats">
+				<div class="vehicle-stat">
+					<div class="v-label">Odometer</div>
+					<div class="v-value">${fmtNum(v.current_odometer != null ? v.current_odometer : v.last_odometer, 0)} <small style="font-size:12px;color:var(--gray-400)">km</small></div>
+				</div>
+				<div class="vehicle-stat">
+					<div class="v-label">Avg yield</div>
+					<div class="v-value">${fmtNum(v.average_yield, 2)} <small style="font-size:12px;color:var(--gray-400)">km/L</small></div>
+				</div>
+			</div>
+		</div>`;
+	}
+
+	function renderVehicles(el) {
+		el.innerHTML = `
+			<div class="section-head">
+				<div><h2>Vehicles</h2><p>${fmtNum(state.vehicles.length, 0)} vehicle(s) you can read</p></div>
+			</div>
+			${state.vehicles.length ? `<div class="grid-3">${state.vehicles.map(vehicleCard).join("")}</div>` : emptyState("truck", "No vehicles", "No vehicles are available to your account yet.")}
+		`;
+		bindCommonActions(el);
+		refreshIcons();
+	}
+
+	// ------------------------------------------------------------ expenses
+	function renderExpenses(el) {
+		const total = state.expenses.reduce((s, x) => s + Number(x.amount || 0), 0);
+		const rows = state.expenses.map((x) => `
+			<tr>
+				<td>${esc(fmtDate(x.creation))}</td>
+				<td><b>${esc(x.trip)}</b></td>
+				<td>${x.expense_type ? `<span class="badge">${esc(x.expense_type)}</span>` : '<span class="badge">Other</span>'}</td>
+				<td style="text-align:right;font-weight:700">${fmtMoney(x.amount)}</td>
+			</tr>`).join("");
+
+		el.innerHTML = `
+			<div class="section-head">
+				<div><h2>Expenses</h2><p>${fmtNum(state.expenses.length, 0)} expense(s) · total ${fmtMoney(total)}</p></div>
+				<div class="section-actions">
+					<button class="btn btn-primary" data-action="new-expense"><i data-lucide="plus" width="16" height="16"></i> Add Expense</button>
+				</div>
+			</div>
+			${rows ? `<div class="table-wrap"><table class="data">
+				<thead><tr><th>Date</th><th>Trip</th><th>Type</th><th style="text-align:right">Amount</th></tr></thead>
+				<tbody>${rows}</tbody>
+			</table></div>` : emptyState("receipt", "No expenses yet", "Add tolls, parking or other trip costs here.")}
+		`;
+		bindCommonActions(el);
+		refreshIcons();
+	}
+
+	// ------------------------------------------------------------- account
+	function licenseBadge(expiry) {
+		if (!expiry) return chip("cancelled", "Not set");
+		const t = parseDT(expiry);
+		const days = Math.ceil((t - Date.now()) / 86400000);
+		if (days < 0) return chip("critical", "Expired " + Math.abs(days) + "d ago");
+		if (days <= 30) return chip("below", days + "d left");
+		return chip("ok", days + "d left");
+	}
+
+	function renderAccount(el) {
+		const b = state.boot || {};
+		const drv = b.driver || {};
+		const name = b.full_name || b.user || "User";
+		const role = b.is_fleet_manager ? "Fleet Manager" : "Driver";
+		const expiry = drv.license_expiry || drv.expiry_date;
+
+		el.innerHTML = `
+			<div class="profile-banner">
+				<div class="avatar">${esc(initials(name))}</div>
+				<div>
+					<div class="profile-name">${esc(name)}</div>
+					<div class="profile-role">${esc(b.user)} · ${esc(role)}</div>
+				</div>
+				<div style="margin-left:auto">${b.is_fleet_manager ? '<span class="badge badge-blue">Full access</span>' : '<span class="badge badge-mint">Field user</span>'}</div>
+			</div>
+
+			<div class="grid-2">
+				<div class="card">
+					<div class="card-title" style="margin-bottom:8px">Driver record</div>
+					<p class="card-sub" style="margin-bottom:12px">Linked via <code>Driver.user</code> — powers your permission scoping.</p>
+					<div class="detail-list">
+						<div class="detail-row"><span class="detail-label"><i data-lucide="id-card" width="15" height="15"></i> Name</span><span class="detail-value">${esc(drv.driver_name || drv.full_name || "—")}</span></div>
+						<div class="detail-row"><span class="detail-label"><i data-lucide="badge-check" width="15" height="15"></i> Licence</span><span class="detail-value">${esc(drv.license_number || "—")}</span></div>
+						<div class="detail-row"><span class="detail-label"><i data-lucide="calendar-clock" width="15" height="15"></i> Licence expiry</span><span class="detail-value">${licenseBadge(expiry)}</span></div>
+						<div class="detail-row"><span class="detail-label"><i data-lucide="phone" width="15" height="15"></i> Contact</span><span class="detail-value">${esc(drv.contact_number || "—")}</span></div>
+						<div class="detail-row"><span class="detail-label"><i data-lucide="truck" width="15" height="15"></i> Assigned vehicle</span><span class="detail-value">${esc(drv.assigned_vehicle || "—")}</span></div>
+					</div>
+				</div>
+
+				<div class="card">
+					<div class="card-title" style="margin-bottom:8px">Portal account</div>
+					<p class="card-sub" style="margin-bottom:12px">Session and shortcuts.</p>
+					<div class="detail-list">
+						<div class="detail-row"><span class="detail-label"><i data-lucide="user" width="15" height="15"></i> User ID</span><span class="detail-value">${esc(b.user)}</span></div>
+						<div class="detail-row"><span class="detail-label"><i data-lucide="shield" width="15" height="15"></i> Role</span><span class="detail-value">${esc(role)}</span></div>
+						<div class="detail-row"><span class="detail-label"><i data-lucide="external-link" width="15" height="15"></i> Frappe Desk</span><span class="detail-value"><a href="/app" target="_blank" rel="noopener">Open desk →</a></span></div>
+						<div class="detail-row"><span class="detail-label"><i data-lucide="clipboard-list" width="15" height="15"></i> Trip Log web form</span><span class="detail-value"><a href="/trip-log" target="_blank" rel="noopener">Open form →</a></span></div>
+					</div>
+					<div style="margin-top:16px">
+						<button class="btn btn-danger btn-block" id="account-logout"><i data-lucide="log-out" width="16" height="16"></i> Sign out</button>
+					</div>
+				</div>
+			</div>
+		`;
+		$("#account-logout", el).addEventListener("click", doLogout);
+		refreshIcons();
+	}
+
+	// ============================================================== FORMS
+	function bindCommonActions(root) {
+		$("[data-action='new-trip']", root).forEach((b) => b.addEventListener("click", () => newTripModal()));
+		$("[data-action='log-fuel']", root).forEach((b) => b.addEventListener("click", () => logFuelModal()));
+		$("[data-action='new-expense']", root).forEach((b) => b.addEventListener("click", () => expenseModal()));
+		$("[data-action='go-trips']", root).forEach((b) => b.addEventListener("click", () => navigate("trips")));
+	}
+
+	async function newTripModal() {
+		const isMgr = !!(state.boot && state.boot.is_fleet_manager);
+		let drivers = [];
+		if (isMgr) {
+			try { drivers = (await apiCall("fleet_log.api.get_drivers")) || []; } catch (e) { drivers = []; }
+		}
+		const defaultDriver = (state.boot && state.boot.driver && state.boot.driver.name) || "";
+		const nowVal = new Date().toISOString().slice(0, 16);
+		const defaultOdo = state.vehicles[0] ? (state.vehicles[0].current_odometer != null ? state.vehicles[0].current_odometer : state.vehicles[0].last_odometer) : "";
+		const driverField = isMgr
+			? fieldHTML("Driver", `<select class="select" id="nt-driver"><option value="">— auto (linked driver) —</option>${drivers.map((d) => `<option value="${esc(d.name)}" ${d.name === defaultDriver ? "selected" : ""}>${esc(d.driver_name || d.full_name || d.name)}</option>`).join("")}</select>`)
+			: "";
+		openModal({
+			title: "New trip",
+			sub: "The trip is created in the Assigned state.",
+			okLabel: "Create trip",
+			body: `
+				${driverField}
+				${fieldHTML("Vehicle", `<select class="select" id="nt-vehicle" required>${vehicleOptions()}</select>`)}
+				<div class="form-row">
+					${fieldHTML("Trip type", `<select class="select" id="nt-type"><option>Field Work</option><option>Delivery</option><option>Personal</option><option selected>Other</option></select>`)}
+					${fieldHTML("Start odometer (km)", `<input class="input" type="number" min="0" step="0.1" id="nt-odo" value="${esc(defaultOdo)}" required>`)}
+				</div>
+				${fieldHTML("Purpose", `<input class="input" type="text" id="nt-purpose" placeholder="e.g. Field spray — North block" maxlength="140">`)}
+				${fieldHTML("Start location", `<input class="input" type="text" id="nt-loc" placeholder="e.g. Depot, Chennai">`)}
+				${fieldHTML("Start time", `<input class="input" type="datetime-local" id="nt-time" value="${esc(nowVal)}" required>`)}
+			`,
+			onOpen(body) {
+				const sel = $("#nt-vehicle", body);
+				sel.addEventListener("change", () => {
+					const v = state.vehicles.find((x) => x.name === sel.value);
+					if (v && (v.current_odometer != null || v.last_odometer != null)) {
+						$("#nt-odo", body).value = v.current_odometer != null ? v.current_odometer : v.last_odometer;
+					}
+				});
+			},
+			async onSubmit(body) {
+				const v = $("#nt-vehicle", body).value;
+				const odo = $("#nt-odo", body).value;
+				if (!v) throw new Error("Please choose a vehicle.");
+				if (!odo) throw new Error("Start odometer is required.");
+				const start_time = $("#nt-time", body).value ? $("#nt-time", body).value.replace("T", " ") + ":00" : undefined;
+				const r = await apiCall("fleet_log.api.create_trip", {
+					vehicle: v,
+					driver: isMgr ? ($("#nt-driver", body).value || null) : undefined,
+					trip_type: $("#nt-type", body).value,
+					purpose: $("#nt-purpose", body).value,
+					start_location: $("#nt-loc", body).value,
+					start_odometer: odo,
+					start_time: start_time,
+				});
+				toast(`Trip ${r.name} created (Assigned)`);
+				await reload();
+			},
+		});
+	}
+
+	function beginTripModal(trip) {
+		const t = parseDT(trip.start_time);
+		openModal({
+			title: "Begin trip",
+			sub: `${esc(trip.name)} — confirm the start readings, then mark it In Progress.`,
+			okLabel: "Begin trip",
+			body: `
+				${fieldHTML("Start odometer (km)", `<input class="input" type="number" min="0" step="0.1" id="bt-odo" value="${esc(trip.start_odometer)}" required>`)}
+				${fieldHTML("Start time", `<input class="input" type="datetime-local" id="bt-time" value="${esc(t ? t.toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16))}" required>`)}
+			`,
+			async onSubmit(body) {
+				await apiCall("fleet_log.api.update_trip", {
+					name: trip.name,
+					status: "In Progress",
+					start_odometer: $("#bt-odo", body).value,
+					start_time: $("#bt-time", body).value.replace("T", " ") + ":00",
+				});
+				toast(`${trip.name} is now In Progress`);
+				await reload();
+			},
+		});
+	}
+
+	function completeTripModal(trip) {
+		const v = state.vehicles.find((x) => x.name === trip.vehicle);
+		const cur = v ? (v.current_odometer != null ? v.current_odometer : v.last_odometer) : "";
+		openModal({
+			title: "Complete trip",
+			sub: `${esc(trip.name)} — record the end readings to finish the trip.`,
+			okLabel: "Complete trip",
+			body: `
+				${fieldHTML("End location", `<input class="input" type="text" id="ct-loc" placeholder="e.g. Warehouse, Madurai">`)}
+				${fieldHTML("End odometer (km)", `<input class="input" type="number" min="0" step="0.1" id="ct-odo" value="${esc(cur)}" required>`)}
+				${fieldHTML("End time", `<input class="input" type="datetime-local" id="ct-time" value="${esc(new Date().toISOString().slice(0, 16))}" required>`)}
+			`,
+			async onSubmit(body) {
+				await apiCall("fleet_log.api.update_trip", {
+					name: trip.name,
+					status: "Completed",
+					end_location: $("#ct-loc", body).value,
+					end_odometer: $("#ct-odo", body).value,
+					end_time: $("#ct-time", body).value.replace("T", " ") + ":00",
+				});
+				toast(`${trip.name} completed`);
+				await reload();
+			},
+		});
+	}
+
+	function confirmAction(title, text, okLabel, fn, danger) {
+		openModal({
+			title: title,
+			sub: "Please confirm.",
+			okLabel: okLabel,
+			danger: danger,
+			body: `<p style="font-size:14px;color:var(--gray-500)">${text}</p>`,
+			async onSubmit() {
+				await fn();
+			},
+		});
+	}
+
+	function logFuelModal() {
+		const v0 = state.vehicles[0];
+		const defOdo = v0 ? (v0.current_odometer != null ? v0.current_odometer : v0.last_odometer) : "";
+		const openTrips = state.trips.filter((t) => ["Assigned", "In Progress"].includes(t.status || "Assigned"));
+		openModal({
+			title: "Log fuel",
+			sub: "Fill-up details. Yield is computed as distance since the previous fill-up.",
+			okLabel: "Save fuel log",
+			body: `
+				<div class="form-row">
+					${fieldHTML("Vehicle", `<select class="select" id="lf-vehicle" required>${vehicleOptions()}</select>`)}
+					${fieldHTML("Trip (optional)", `<select class="select" id="lf-trip"><option value="">Standalone</option>${openTrips.map((t) => `<option value="${esc(t.name)}">${esc(t.name)}</option>`).join("")}</select>`)}
+				</div>
+				${fieldHTML("Odometer at fill (km)", `<input class="input" type="number" min="0" step="0.1" id="lf-odo" value="${esc(defOdo)}" required>`)}
+				<div class="form-row">
+					${fieldHTML("Quantity (L)", `<input class="input" type="number" min="0.01" step="0.01" id="lf-qty" required>`)}
+					${fieldHTML("Cost (₹)", `<input class="input" type="number" min="0" step="0.01" id="lf-cost" required>`)}
+				</div>
+				<div class="form-row">
+					${fieldHTML("Fuel type", `<select class="select" id="lf-type"><option value="">—</option><option>Petrol</option><option>Diesel</option><option>CNG</option><option>Electric</option></select>`)}
+					${fieldHTML("Vendor / station", `<input class="input" type="text" id="lf-vendor" placeholder="e.g. Indian Oil — Ring Rd">`)}
+				</div>
+				<div id="lf-preview" class="badge badge-blue" style="margin-top:4px"></div>
+			`,
+			onOpen(body) {
+				const calc = () => {
+					const q = Number($("#lf-qty", body).value);
+					const c = Number($("#lf-cost", body).value);
+					if (q > 0 && c > 0) {
+						$("#lf-preview", body).textContent = "≈ ₹" + (c / q).toFixed(2) + " per litre";
+					} else {
+						$("#lf-preview", body).textContent = "";
+					}
+				};
+				$("#lf-qty", body).addEventListener("input", calc);
+				$("#lf-cost", body).addEventListener("input", calc);
+			},
+			async onSubmit(body) {
+				const v = $("#lf-vehicle", body).value;
+				const qty = $("#lf-qty", body).value;
+				const cost = $("#lf-cost", body).value;
+				const odo = $("#lf-odo", body).value;
+				if (!v || !qty || cost === "" || !odo) throw new Error("Vehicle, quantity, cost and odometer are required.");
+				const r = await apiCall("fleet_log.api.log_fuel", {
+					vehicle: v,
+					trip: $("#lf-trip", body).value || null,
+					fuel_quantity: qty,
+					fuel_cost: cost,
+					odometer_at_fill: odo,
+					fuel_type: $("#lf-type", body).value || null,
+					fuel_vendor: $("#lf-vendor", body).value || null,
+				});
+				toast(r.sanity_flag === "Suspicious" ? "Saved — flagged Suspicious (yield out of range)" : "Fuel log saved");
+				await reload();
+			},
+		});
+	}
+
+	function expenseModal() {
+		const trips = state.trips.slice(0, 50);
+		openModal({
+			title: "Add expense",
+			sub: "Attach a trip cost such as a toll or parking fee.",
+			okLabel: "Save expense",
+			body: `
+				${fieldHTML("Trip", `<select class="select" id="ex-trip" required>${trips.length ? trips.map((t) => `<option value="${esc(t.name)}">${esc(t.name)} — ${esc(t.purpose || "")}</option>`).join("") : '<option value="">No trips available</option>'}</select>`)}
+				<div class="form-row">
+					${fieldHTML("Type", `<select class="select" id="ex-type"><option>Toll</option><option>Parking</option><option selected>Other</option></select>`)}
+					${fieldHTML("Amount (₹)", `<input class="input" type="number" min="0" step="0.01" id="ex-amount" required>`)}
+				</div>
+			`,
+			async onSubmit(body) {
+				const trip = $("#ex-trip", body).value;
+				const amount = $("#ex-amount", body).value;
+				if (!trip) throw new Error("Please choose a trip.");
+				if (amount === "" || Number(amount) <= 0) throw new Error("Amount must be greater than zero.");
+				const r = await apiCall("fleet_log.api.create_expense", {
+					trip: trip,
+					expense_type: $("#ex-type", body).value,
+					amount: amount,
+				});
+				toast("Expense added");
+				await reload();
+			},
+		});
+	}
+
+	// ============================================================== SIDEBAR
+	function openSidebar() {
+		$("#sidebar").classList.add("open");
+		$("#sidebar-backdrop").classList.add("show");
+	}
+	function closeSidebar() {
+		$("#sidebar").classList.remove("open");
+		$("#sidebar-backdrop").classList.remove("show");
+	}
+
+	async function doLogout() {
+		try { await apiCall("logout"); } catch (e) { /* session may be gone */ }
+		window.location.reload();
+	}
+
+	// ============================================================== INIT
+	function bindStatic() {
+		$("#login-form").addEventListener("submit", async (e) => {
+			e.preventDefault();
+			const btn = $("#login-btn");
+			busy(btn, true);
+			$("#login-error").classList.add("hidden");
+			try {
+				await apiCall("login", { usr: $("#login-usr").value.trim(), pwd: $("#login-pwd").value });
+				window.location.hash = "dashboard";
+				await bootPortal();
+			} catch (err) {
+				const errEl = $("#login-error");
+				errEl.textContent = err.message || "Invalid credentials.";
+				errEl.classList.remove("hidden");
+			} finally {
+				busy(btn, false);
+			}
+		});
+
+		$("#logout-btn").addEventListener("click", doLogout);
+		$("#menu-toggle").addEventListener("click", openSidebar);
+		$("#sidebar-backdrop").addEventListener("click", closeSidebar);
+		$("#btn-new-trip").addEventListener("click", () => newTripModal());
+		$("#btn-log-fuel").addEventListener("click", () => logFuelModal());
+
+		$(".nav-item").forEach((a) => a.addEventListener("click", (e) => {
+			e.preventDefault();
+			navigate(a.dataset.view);
+		}));
+
+		window.addEventListener("hashchange", () => {
+			const v = window.location.hash.replace("#", "");
+			if (v && VIEWS[v]) navigate(v);
+		});
+	}
+
+	async function bootPortal() {
+		try {
+			state.boot = await apiCall("fleet_log.api.get_portal_bootstrap");
+		} catch (e) {
+			state.boot = {
+				user: (window.FP && window.FP.user) || "",
+				full_name: (window.FP && window.FP.full_name) || "",
+				is_fleet_manager: false,
+				driver: null,
+			};
+		}
+		await loadAll();
+		showApp();
+	}
+
+	(async function init() {
+		bindStatic();
+		refreshIcons();
+		let authed = false;
+		try { authed = await checkAuth(); } catch (e) { authed = false; }
+		if (authed) {
+			await bootPortal();
+		} else {
+			showLogin();
+		}
+	})();
+})();
+
+</script>
 </body>
 </html>
